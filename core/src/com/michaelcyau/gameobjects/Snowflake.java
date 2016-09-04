@@ -4,11 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.MathUtils;
 import com.michaelcyau.gameworld.GameWorld;
 
-import java.util.List;
-
-/**
- * Created by Michael on 2016-09-03.
- */
 public class Snowflake {
 
     private Vector2 position;
@@ -55,6 +50,8 @@ public class Snowflake {
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
             gameWorld.recycleSnowflake(this);
+        } else if (position.y > gameWorld.getWorldTop()) {
+            gameWorld.recycleBottomSnowflake(this);
         }
     }
 }

@@ -77,6 +77,10 @@ public class Bunny {
         return height;
     }
 
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
     public float getRotation() {
         return rotation;
     }

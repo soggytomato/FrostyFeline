@@ -26,12 +26,15 @@ public class GameWorld {
     private Bunny bunny;
     private List<Snowflake> snowflakes;
     private List<Snowflake> deadSnowflakes;
+    private List<Snowflake> bottomDeadSnowflakes;
     private List<Bell> bells;
-    private Bell topBell;
-    private List<ScoreEffect> scoreEffects;
-
-    private float newestBellPositionY;
     private List<Bell> deadBells;
+    private Bell topBell;
+    private float newestBellPositionY;
+
+    private List<ScoreEffect> scoreEffects;
+    private List<ScoreEffect> deadScoreEffects;
+
     private int gameWidth;
     private int gameHeight;
 
@@ -40,7 +43,6 @@ public class GameWorld {
 
     private BigInteger score = new BigInteger("0");
     private BigInteger nextScoreAdded = new BigInteger("10");
-    private NumberFormat formatter = NumberFormat.getInstance(new Locale("en_US"));
     private boolean gameOver = false;
 
     public GameWorld(int gameWidth, int gameHeight) {
@@ -51,12 +53,14 @@ public class GameWorld {
         initSnowflakes();
         initBells();
         scoreEffects = new LinkedList<ScoreEffect>();
+        deadScoreEffects = new LinkedList<ScoreEffect>();
     }
 
     public void update(float delta) {
         updateBunny(delta);
         updateSnowflakes(delta);
         updateBells(delta);
+        updateScoreEffects(delta);
         detectCollisions();
     }
 
@@ -112,8 +116,16 @@ public class GameWorld {
         deadSnowflakes.add(snowflake);
     }
 
+    public void recycleBottomSnowflake(Snowflake snowflake) {
+        bottomDeadSnowflakes.add(snowflake);
+    }
+
     public void removeBell(Bell bell) {
         deadBells.add(bell);
+    }
+
+    public void removeScoreEffect(ScoreEffect scoreEffect) {
+        deadScoreEffects.add(scoreEffect);
     }
 
     public void endGame() {
@@ -138,6 +150,7 @@ public class GameWorld {
             snowflakes.add(new Snowflake(MathUtils.random(gameWidth), MathUtils.random(gameHeight), this));
         }
         deadSnowflakes = new LinkedList<Snowflake>();
+        bottomDeadSnowflakes = new LinkedList<Snowflake>();
     }
 
     private void updateBunny(float delta) {
@@ -162,9 +175,15 @@ public class GameWorld {
         }
         for (Snowflake snowflake: deadSnowflakes) {
             snowflakes.remove(snowflake);
-            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), (int) worldTopMax, this));
+            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), (int) worldTop, this));
         }
+        for (Snowflake snowflake: bottomDeadSnowflakes) {
+            snowflakes.remove(snowflake);
+            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), (int) (worldTop - gameHeight + (MathUtils.random(bunny.getVelocity().y) * delta)), this));
+        }
+
         deadSnowflakes.clear();
+        bottomDeadSnowflakes.clear();
     }
 
     private void updateBells(float delta) {
@@ -187,6 +206,15 @@ public class GameWorld {
         }
     }
 
+    private void updateScoreEffects(float delta) {
+        for (ScoreEffect scoreEffect: scoreEffects) {
+            scoreEffect.update(delta);
+        }
+        for (ScoreEffect scoreEffect: deadScoreEffects) {
+            scoreEffects.remove(scoreEffect);
+        }
+    }
+
     private void detectCollisions() {
         for (Bell bell: bells) {
             if (bunny.getY() >= bell.getY() - bell.width - bunny.getHeight() &&
@@ -194,7 +222,6 @@ public class GameWorld {
                     !bell.isDying()) {
                 if (Intersector.overlaps(bunny.getBoundingCircle(), bell.getBoundingCircle())) {
                     bunny.jump();
-                    //deadBells.add(bell);
                     bell.die();
                     score = score.add(nextScoreAdded);
                     scoreEffects.add(new ScoreEffect(bell.getX(), bell.getY() + bell.width, NumberFormat.getNumberInstance(Locale.US).format(nextScoreAdded), this));

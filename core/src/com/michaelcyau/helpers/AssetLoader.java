@@ -18,8 +18,10 @@ public class AssetLoader {
     public static Music bgMusic;
     public static Sound ring;
     public static BitmapFont font;
+    public static BitmapFont scoreFont;
 
     public static int maxFontSize = 72;
+    public static int maxScoreFontSize = 96;
     public static int maxScreenWidth = 2160;
 
     public static void load() {
@@ -50,9 +52,13 @@ public class AssetLoader {
         parameter.size = (int) (maxFontSize * ((float) Gdx.graphics.getWidth() / maxScreenWidth));
         parameter.minFilter = TextureFilter.Linear;
         parameter.magFilter = TextureFilter.Linear;
-
         font = generator.generateFont(parameter);
+
+        parameter.size = (int) (maxScoreFontSize * ((float) Gdx.graphics.getWidth() / maxScreenWidth));
+        scoreFont = generator.generateFont(parameter);
+
         generator.dispose();
+
     }
 
     public static void dispose() {
