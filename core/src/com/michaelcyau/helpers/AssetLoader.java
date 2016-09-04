@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class AssetLoader {
 
@@ -16,6 +18,9 @@ public class AssetLoader {
     public static Music bgMusic;
     public static Sound ring;
     public static BitmapFont font;
+
+    public static int maxFontSize = 72;
+    public static int maxScreenWidth = 2160;
 
     public static void load() {
         bunnyTexture = new Texture(Gdx.files.internal("data/bunny.png"));
@@ -37,8 +42,17 @@ public class AssetLoader {
 
         ring = Gdx.audio.newSound(Gdx.files.internal("mus/ring.wav"));
 
-        font = new BitmapFont(Gdx.files.internal("data/text2.fnt"), true);
-        font.getData().setScale(0.05f, 0.05f);
+//        font = new BitmapFont(Gdx.files.internal("data/text2.fnt"), true);
+//        font.getData().setScale(0.05f, 0.05f);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/DINPro-Regular.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = (int) (maxFontSize * ((float) Gdx.graphics.getWidth() / maxScreenWidth));
+        parameter.minFilter = TextureFilter.Linear;
+        parameter.magFilter = TextureFilter.Linear;
+
+        font = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     public static void dispose() {

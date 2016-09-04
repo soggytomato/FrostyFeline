@@ -3,6 +3,7 @@ package com.michaelcyau.gameworld;
 import com.badlogic.gdx.math.Intersector;
 import com.michaelcyau.gameobjects.Bell;
 import com.michaelcyau.gameobjects.Bunny;
+import com.michaelcyau.gameobjects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
 
@@ -27,6 +28,8 @@ public class GameWorld {
     private List<Snowflake> deadSnowflakes;
     private List<Bell> bells;
     private Bell topBell;
+    private List<ScoreEffect> scoreEffects;
+
     private float newestBellPositionY;
     private List<Bell> deadBells;
     private int gameWidth;
@@ -47,6 +50,7 @@ public class GameWorld {
         bunny = new Bunny(68, 0, this);
         initSnowflakes();
         initBells();
+        scoreEffects = new LinkedList<ScoreEffect>();
     }
 
     public void update(float delta) {
@@ -66,6 +70,10 @@ public class GameWorld {
 
     public List<Bell> getBells() {
         return bells;
+    }
+
+    public List<ScoreEffect> getScoreEffects() {
+        return scoreEffects;
     }
 
     public int getWidth() {
@@ -181,13 +189,15 @@ public class GameWorld {
 
     private void detectCollisions() {
         for (Bell bell: bells) {
-            if (bunny.getY() >= bell.getY() - bell.getHeight() - bunny.getHeight() &&
-                    bunny.getY() <= bell.getY() + bell.getHeight() &&
+            if (bunny.getY() >= bell.getY() - bell.width - bunny.getHeight() &&
+                    bunny.getY() <= bell.getY() + bell.width &&
                     !bell.isDying()) {
                 if (Intersector.overlaps(bunny.getBoundingCircle(), bell.getBoundingCircle())) {
                     bunny.jump();
-                    deadBells.add(bell);
+                    //deadBells.add(bell);
+                    bell.die();
                     score = score.add(nextScoreAdded);
+                    scoreEffects.add(new ScoreEffect(bell.getX(), bell.getY() + bell.width, NumberFormat.getNumberInstance(Locale.US).format(nextScoreAdded), this));
                     nextScoreAdded = nextScoreAdded.add(BigInteger.TEN);
                 }
             }

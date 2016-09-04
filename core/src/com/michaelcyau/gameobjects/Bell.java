@@ -21,7 +21,7 @@ public class Bell {
     private float rotation_a;
 
     private float transparency = 1;
-    private float fadeOutSpeed = 1;
+    private float fadeOutSpeed = 2;
     private float fadeOutLocation = 0.2f;
     private boolean dying = false;
 
@@ -60,14 +60,6 @@ public class Bell {
         return position.y;
     }
 
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
     public float getRotation() {
         return rotation;
     }
@@ -84,6 +76,12 @@ public class Bell {
         return dying;
     }
 
+    public void die() {
+        dying = true;
+        acceleration.y = 400;
+        velocity.y = -150;
+    }
+
     private void swing(float delta) {
         float oldRotation = rotation;
         rotation_v += rotation_a * delta;
@@ -96,9 +94,11 @@ public class Bell {
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
             gameWorld.removeBell(this);
-        } else if (position.y < gameWorld.getHeight() * fadeOutLocation) {
+        } else if (position.y < gameWorld.getHeight() * fadeOutLocation || dying) {
             if (transparency - (fadeOutSpeed * delta) >= 0) {
                 transparency -= (fadeOutSpeed * delta);
+            } else {
+                gameWorld.removeBell(this);
             }
             dying = true;
         }

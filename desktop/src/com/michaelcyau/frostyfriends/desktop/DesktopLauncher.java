@@ -8,8 +8,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Frosty Friends";
-		config.width = 408;
-		config.height = 612;
+		config.width = 480;
+		config.height = 800;
 		new LwjglApplication(new FFGame(), config);
 	}
 }
