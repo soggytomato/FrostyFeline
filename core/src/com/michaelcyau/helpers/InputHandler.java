@@ -2,6 +2,7 @@ package com.michaelcyau.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.michaelcyau.frostyfriends.FFGame;
 import com.michaelcyau.gameobjects.Bunny;
 import com.michaelcyau.screens.GameScreen;
 

@@ -21,7 +21,9 @@ public class GameWorld {
     private float panDownBoundary = 0.3f; // as a fraction of screen height
     private float bottomBuffer = 0.3f; // as a fraction of screen height
     private float topBuffer = 0.5f; // as a fraction of screen height
-    private float bellInterval = 0.15f; // as a fraction of screen height
+    private float bellInterval = 0.25f; // as a factor of GAME WIDTH (not screen width)
+    private float bellMaxInterval = 0.4f;
+    private float bellIntervalGrowthAmount = 0.00015f;
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
@@ -31,6 +33,9 @@ public class GameWorld {
     private List<Bell> deadBells;
     private Bell topBell;
     private float newestBellPositionY;
+    private float bellSize = 14f;
+    private float minBellSize = 7f;
+    private float bellShrinkAmount = 0.007f;
 
     private List<ScoreEffect> scoreEffects;
     private List<ScoreEffect> deadScoreEffects;
@@ -136,8 +141,8 @@ public class GameWorld {
         bells = new LinkedList<Bell>();
         newestBellPositionY = gameHeight * 0.1f;
         while (newestBellPositionY < gameHeight * (1 + topBuffer)) {
-            newestBellPositionY += (gameHeight * bellInterval);
-            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - Bell.width), newestBellPositionY, this);
+            newestBellPositionY += (gameWidth * bellInterval);
+            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
             bells.add(bell);
             topBell = bell;
         }
@@ -193,16 +198,20 @@ public class GameWorld {
         for (Bell bell: deadBells) {
             bells.remove(bell);
         }
-        if (worldTop > newestBellPositionY + (gameHeight * bellInterval)) {
-            newestBellPositionY += gameHeight * bellInterval;
-            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - Bell.width), newestBellPositionY, this);
+        if (worldTop > newestBellPositionY + (gameWidth * bellInterval)) {
+            newestBellPositionY += gameWidth * bellInterval;
+            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
             bells.add(bell);
             topBell = bell;
+            bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
+            bellInterval = bellInterval + bellIntervalGrowthAmount > bellMaxInterval ? bellMaxInterval : bellInterval + bellIntervalGrowthAmount;
         }
-        if (topBell.getY() < newestBellPositionY - (gameHeight * bellInterval)) {
-            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - Bell.width), newestBellPositionY, this);
+        if (topBell.getY() < newestBellPositionY - (gameWidth * bellInterval)) {
+            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
             bells.add(bell);
             topBell = bell;
+            bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
+            bellInterval = bellInterval + bellIntervalGrowthAmount > bellMaxInterval ? bellMaxInterval : bellInterval + bellIntervalGrowthAmount;
         }
     }
 
@@ -217,14 +226,14 @@ public class GameWorld {
 
     private void detectCollisions() {
         for (Bell bell: bells) {
-            if (bunny.getY() >= bell.getY() - bell.width - bunny.getHeight() &&
-                    bunny.getY() <= bell.getY() + bell.width &&
+            if (bunny.getY() >= bell.getY() - bellSize - bunny.getHeight() &&
+                    bunny.getY() <= bell.getY() + bellSize &&
                     !bell.isDying()) {
                 if (Intersector.overlaps(bunny.getBoundingCircle(), bell.getBoundingCircle())) {
                     bunny.jump();
                     bell.die();
                     score = score.add(nextScoreAdded);
-                    scoreEffects.add(new ScoreEffect(bell.getX(), bell.getY() + bell.width, NumberFormat.getNumberInstance(Locale.US).format(nextScoreAdded), this));
+                    scoreEffects.add(new ScoreEffect(bell.getX(), bell.getY() + bellSize, bell, NumberFormat.getNumberInstance(Locale.US).format(nextScoreAdded), this));
                     nextScoreAdded = nextScoreAdded.add(BigInteger.TEN);
                 }
             }

@@ -1,6 +1,5 @@
 package com.michaelcyau.gameobjects;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;

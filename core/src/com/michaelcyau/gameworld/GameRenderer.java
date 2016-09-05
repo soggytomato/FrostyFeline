@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.michaelcyau.frostyfriends.FFGame;
 import com.michaelcyau.gameobjects.Bell;
 import com.michaelcyau.gameobjects.Bunny;
 import com.michaelcyau.gameobjects.ScoreEffect;
@@ -61,6 +62,7 @@ public class GameRenderer {
         renderBunny();
         renderScoreEffects();
         renderScore();
+        //renderSplash();
     }
 
     private void renderBunny() {
@@ -104,8 +106,8 @@ public class GameRenderer {
             } else {
                 batcher.setColor(1, 1, 1, 1);
             }
-            batcher.draw(AssetLoader.bell, bell.getX(), camTop - bell.getY() - bell.height, bell.width / 2.0f, 0,
-                    bell.width, bell.height, 1, 1, bell.getRotation());
+            batcher.draw(AssetLoader.bell, bell.getX(), camTop - bell.getY() - bell.getHeight(), bell.getWidth() / 2.0f, 0,
+                    bell.getWidth(), bell.getHeight(), 1, 1, bell.getRotation());
         }
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
@@ -132,6 +134,20 @@ public class GameRenderer {
         uiBatcher.begin();
         uiBatcher.enableBlending();
         AssetLoader.font.draw(uiBatcher, gameWorld.getScore(), offset, Gdx.graphics.getHeight() - offset);
+        uiBatcher.disableBlending();
+        uiBatcher.end();
+    }
+
+    private void renderSplash() {
+        float splashWidth = AssetLoader.splashScreen.getRegionWidth();
+        float splashHeight = AssetLoader.splashScreen.getRegionHeight();
+        float aspectRatio = splashHeight / splashWidth;
+
+        float sizeDifference = (Gdx.graphics.getWidth() * aspectRatio) - Gdx.graphics.getHeight();
+
+        uiBatcher.begin();
+        uiBatcher.enableBlending();
+        uiBatcher.draw(AssetLoader.splashScreen, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
         uiBatcher.disableBlending();
         uiBatcher.end();
     }

@@ -7,9 +7,6 @@ import com.michaelcyau.gameworld.GameWorld;
 
 public class Bell {
 
-    public static float width = 10;
-    public static float height = 10;
-
     private Vector2 position;
     private Vector2 velocity;
     private Vector2 acceleration;
@@ -19,18 +16,22 @@ public class Bell {
     private float rotation;
     private float rotation_v;
     private float rotation_a;
+    private float width;
+    private float height;
 
     private float transparency = 1;
     private float fadeOutSpeed = 2;
-    private float fadeOutLocation = 0.2f;
+    private float fadeOutLocation = 0.3f;
     private boolean dying = false;
 
     private GameWorld gameWorld;
 
     private Circle boundingCircle;
 
-    public Bell(float x, float y, GameWorld gameWorld) {
+    public Bell(float x, float y, float width, float height, GameWorld gameWorld) {
         position = new Vector2(x, y);
+        this.width = width;
+        this.height = height;
         velocity = new Vector2(0, -6f);
         acceleration = new Vector2(0, 0);
         this.gameWorld = gameWorld;
@@ -58,6 +59,14 @@ public class Bell {
 
     public float getY() {
         return position.y;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
     }
 
     public float getRotation() {
@@ -94,7 +103,7 @@ public class Bell {
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
             gameWorld.removeBell(this);
-        } else if (position.y < gameWorld.getHeight() * fadeOutLocation || dying) {
+        } else if (position.y < gameWorld.getWidth() * fadeOutLocation || dying) {
             if (transparency - (fadeOutSpeed * delta) >= 0) {
                 transparency -= (fadeOutSpeed * delta);
             } else {

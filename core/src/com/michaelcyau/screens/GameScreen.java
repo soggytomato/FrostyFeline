@@ -2,7 +2,6 @@ package com.michaelcyau.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.michaelcyau.gameworld.GameRenderer;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.InputHandler;
@@ -36,7 +35,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log("GameScreen", "resizing");
+
     }
 
     @Override
@@ -61,11 +60,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Leave blank
-    }
 
-    public float getScaleFactor() {
-        return scaleFactor;
     }
 
 }

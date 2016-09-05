@@ -9,59 +9,58 @@ import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.AssetLoader;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ScoreEffect {
-    private Vector2 position;
+    private Vector2 position; // CENTER position
     private Vector2 velocity;
     private String score;
     private GlyphLayout layout;
+    private float width;
+    private float height;
+    private float initStarSpeed = 200;
+    private float initStarAccel = -600;
 
-    private float maxLifetime = 0.5f; // in seconds
-    private float lifetime = maxLifetime;
+    private float lifetime = -initStarSpeed / initStarAccel;
 
+    private float driftSpeed = -20;
     private float transparency = 1;
     private float fadeOutSpeed = 2;
 
     private GameWorld gameWorld;
 
-    public ScoreEffect (float x, float y, String score, GameWorld gameWorld) {
-        position = new Vector2(x, y);
+    private int numStars = 18;
+    private List<Star> stars;
+
+    public ScoreEffect (float x, float y, Bell bell, String score, GameWorld gameWorld) {
+        position = new Vector2(x + (bell.getWidth() / 2), y - (bell.getHeight() / 2));
         velocity = new Vector2(0, 0);
         this.score = score;
         this.gameWorld = gameWorld;
         layout = new GlyphLayout();
-        layout.setText(AssetLoader.font, score);
+        layout.setText(AssetLoader.scoreFont, score);
+        width = layout.width;
+        height = layout.height;
+        initStars();
     }
 
     public void update(float delta) {
         position.add(velocity.cpy().scl(delta));
-        if (lifetime != 0) {
-            if (lifetime - delta < 0) {
-                lifetime = 0;
-                velocity.y = -20;
-            } else {
-                lifetime -= delta;
-            }
-        } else {
-            if (transparency - (fadeOutSpeed * delta) > 0) {
-                transparency -= fadeOutSpeed * delta;
-            } else {
-                gameWorld.removeScoreEffect(this);
-            }
-        }
+        updateStars(delta);
+        validate(delta);
     }
 
     public void render(SpriteBatch batcher, SpriteBatch uiBatcher, ShapeRenderer shapeRenderer) {
         renderScore(uiBatcher);
+        renderStars(batcher);
     }
 
     private void renderScore(SpriteBatch uiBatcher) {
         float scalingFactor = (float) Gdx.graphics.getWidth() / (float) gameWorld.getWidth();
 
-        float width = layout.width;
-        float height = layout.height;
-
-        float adjustedPositionX = (position.x * scalingFactor) + ((Bell.width / 2) * scalingFactor) - (width / 2);
-        float adjustedPositionY = (position.y * scalingFactor) - ((Bell.height / 2) * scalingFactor) + (height / 2);
+        float adjustedPositionX = (position.x * scalingFactor) - (width / 2);
+        float adjustedPositionY = (position.y * scalingFactor) + (height / 2);
 
         uiBatcher.begin();
         uiBatcher.enableBlending();
@@ -73,5 +72,44 @@ public class ScoreEffect {
         AssetLoader.scoreFont.setColor(c.r, c.g, c.b, 1);
         uiBatcher.disableBlending();
         uiBatcher.end();
+    }
+
+    private void renderStars(SpriteBatch batcher) {
+        for (Star star: stars) {
+            star.render(batcher);
+        }
+    }
+
+    private void initStars() {
+        stars = new LinkedList<Star>();
+        float angle = 0;
+        float increment = numStars > 0 ? 360f / numStars : 0;
+        for (int i = 0; i < numStars; i++) {
+            stars.add(new Star(position.x, position.y, angle, gameWorld, initStarSpeed, initStarAccel, driftSpeed, fadeOutSpeed));
+            angle += increment;
+        }
+    }
+
+    private void updateStars(float delta) {
+        for (Star star: stars) {
+            star.update(delta);
+        }
+    }
+
+    private void validate(float delta) {
+        if (lifetime != 0) {
+            if (lifetime - delta < 0) {
+                lifetime = 0;
+                velocity.y = driftSpeed;
+            } else {
+                lifetime -= delta;
+            }
+        } else {
+            if (transparency - (fadeOutSpeed * delta) > 0) {
+                transparency -= fadeOutSpeed * delta;
+            } else {
+                gameWorld.removeScoreEffect(this);
+            }
+        }
     }
 }
