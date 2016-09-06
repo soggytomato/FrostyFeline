@@ -2,8 +2,9 @@ package com.michaelcyau.gameworld;
 
 import com.badlogic.gdx.math.Intersector;
 import com.michaelcyau.gameobjects.Bell;
+import com.michaelcyau.gameobjects.Bird;
 import com.michaelcyau.gameobjects.Bunny;
-import com.michaelcyau.gameobjects.ScoreEffect;
+import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
 
@@ -31,6 +32,8 @@ public class GameWorld {
     private List<Snowflake> bottomDeadSnowflakes;
     private List<Bell> bells;
     private List<Bell> deadBells;
+    private List<Bird> birds;
+    private List<Bird> deadBirds;
     private Bell topBell;
     private float newestBellPositionY;
     private float bellSize = 14f;
@@ -57,6 +60,7 @@ public class GameWorld {
         bunny = new Bunny(68, 0, this);
         initSnowflakes();
         initBells();
+        initBirds();
         scoreEffects = new LinkedList<ScoreEffect>();
         deadScoreEffects = new LinkedList<ScoreEffect>();
     }
@@ -65,6 +69,7 @@ public class GameWorld {
         updateBunny(delta);
         updateSnowflakes(delta);
         updateBells(delta);
+        updateBirds(delta);
         updateScoreEffects(delta);
         detectCollisions();
     }
@@ -79,6 +84,10 @@ public class GameWorld {
 
     public List<Bell> getBells() {
         return bells;
+    }
+
+    public List<Bird> getBirds() {
+        return birds;
     }
 
     public List<ScoreEffect> getScoreEffects() {
@@ -129,6 +138,10 @@ public class GameWorld {
         deadBells.add(bell);
     }
 
+    public void removeBird(Bird bird) {
+        deadBirds.add(bird);
+    }
+
     public void removeScoreEffect(ScoreEffect scoreEffect) {
         deadScoreEffects.add(scoreEffect);
     }
@@ -147,6 +160,11 @@ public class GameWorld {
             topBell = bell;
         }
         deadBells = new LinkedList<Bell>();
+    }
+
+    private void initBirds() {
+        birds = new LinkedList<Bird>();
+        deadBirds = new LinkedList<Bird>();
     }
 
     private void initSnowflakes() {
@@ -213,6 +231,16 @@ public class GameWorld {
             bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
             bellInterval = bellInterval + bellIntervalGrowthAmount > bellMaxInterval ? bellMaxInterval : bellInterval + bellIntervalGrowthAmount;
         }
+    }
+
+    private void updateBirds(float delta) {
+        for (Bird bird: birds) {
+            bird.update(delta);
+        }
+        for (Bird bird: deadBirds) {
+            birds.remove(bird);
+        }
+        // bird generation currently in updateBells() method
     }
 
     private void updateScoreEffects(float delta) {

@@ -3,14 +3,13 @@ package com.michaelcyau.gameworld;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.michaelcyau.frostyfriends.FFGame;
 import com.michaelcyau.gameobjects.Bell;
+import com.michaelcyau.gameobjects.Bird;
 import com.michaelcyau.gameobjects.Bunny;
-import com.michaelcyau.gameobjects.ScoreEffect;
+import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.michaelcyau.helpers.AssetLoader;
 
@@ -28,15 +27,15 @@ public class GameRenderer {
     private Bunny bunny;
     private List<Snowflake> snowflakes;
     private List<Bell> bells;
+    private List<Bird> birds;
     private List<ScoreEffect> scoreEffects;
-
-    BitmapFont font = new BitmapFont();
 
     public GameRenderer (GameWorld gameWorld) {
         this.gameWorld = gameWorld;
         bunny = gameWorld.getBunny();
         snowflakes = gameWorld.getSnowflakes();
         bells = gameWorld.getBells();
+        birds = gameWorld.getBirds();
         scoreEffects = gameWorld.getScoreEffects();
 
         cam = new OrthographicCamera();
@@ -59,18 +58,23 @@ public class GameRenderer {
 
         renderSnowflakes();
         renderBells();
-        renderBunny();
+        renderBunny(runTime);
         renderScoreEffects();
         renderScore();
         //renderSplash();
     }
 
-    private void renderBunny() {
+    private void renderBunny(float runTime) {
         boolean facingRight = bunny.isFacingRight();
         batcher.begin();
         batcher.enableBlending();
+
         batcher.draw((facingRight ? AssetLoader.bunnyRight : AssetLoader.bunnyLeft),
                 bunny.getX(), camTop - bunny.getY() - bunny.getHeight(), bunny.getWidth(), bunny.getHeight());
+
+//        batcher.draw(AssetLoader.birdAnimation.getKeyFrame(runTime),
+//                bunny.getX(), camTop - bunny.getY() - bunny.getHeight(), bunny.getWidth(), bunny.getHeight());
+
         batcher.disableBlending();
         batcher.end();
 
@@ -112,15 +116,6 @@ public class GameRenderer {
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
         batcher.end();
-
-        // test
-
-//        for (Bell bell: bells) {
-//            shapeRenderer.begin(ShapeType.Filled);
-//            shapeRenderer.setColor(1, 0, 0, 1);
-//            shapeRenderer.circle(bell.getX(), camTop - bell.getY(), 1);
-//            shapeRenderer.end();
-//        }
     }
 
     private void renderScoreEffects() {

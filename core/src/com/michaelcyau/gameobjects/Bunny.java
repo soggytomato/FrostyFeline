@@ -7,8 +7,8 @@ import com.michaelcyau.helpers.AssetLoader;
 
 public class Bunny {
 
-    public static float width = 13;
-    public static float height = 12;
+    public static float width = 13f;
+    public static float height = 12f;
 
     // NOTE: using a Y-up coordinate system. Y = 0 is at the bottom of the screen.
     private Vector2 position;
