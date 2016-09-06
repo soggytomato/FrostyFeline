@@ -23,11 +23,12 @@ public class Star {
     private float driftSpeed;
     private float transparency = 1;
     private float fadeOutSpeed;
+    private Color color;
 
     private GameWorld gameWorld;
 
     public Star(float x, float y, float angle, GameWorld gameWorld,
-                float initSpeed, float initAccel, float driftSpeed, float fadeOutSpeed) {
+                float initSpeed, float initAccel, float driftSpeed, float fadeOutSpeed, Color color) {
         position = new Vector2(x + initDistance * MathUtils.cosDeg(angle), y + initDistance * MathUtils.sinDeg(angle));
         velocity = new Vector2(initSpeed * MathUtils.cosDeg(angle), initSpeed * MathUtils.sinDeg(angle));
         initVelocity = velocity.cpy();
@@ -35,6 +36,7 @@ public class Star {
         this.gameWorld = gameWorld;
         this.driftSpeed = driftSpeed;
         this.fadeOutSpeed = fadeOutSpeed;
+        this.color = color;
     }
 
     public void update(float delta) {
@@ -53,16 +55,16 @@ public class Star {
         }
         position.add(velocity.cpy().scl(delta));
         rotation += rotation_v * delta;
+        color.a = transparency;
     }
 
     public void render(SpriteBatch batcher) {
         batcher.begin();
         batcher.enableBlending();
-        Color c = batcher.getColor();
-        batcher.setColor(c.r, c.g, c.b, transparency);
+        batcher.setColor(color);
         batcher.draw(AssetLoader.star, position.x - (width / 2), gameWorld.getWorldTop() - position.y - (height / 2), width / 2, height / 2,
                 width, height, 1, 1, rotation);
-        batcher.setColor(c.r, c.g, c.b, 1);
+        batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
         batcher.end();
     }

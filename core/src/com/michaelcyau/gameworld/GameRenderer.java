@@ -1,6 +1,7 @@
 package com.michaelcyau.gameworld;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -56,13 +57,18 @@ public class GameRenderer {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        renderSnowflakes();
-        renderBells();
-        renderBirds(runTime);
-        renderBunny(runTime);
-        renderScoreEffects();
-        renderScore();
-        //renderSplash();
+        if (gameWorld.isRunning() || gameWorld.isGameOver()) {
+            renderSnowflakes();
+            renderBells();
+            renderBirds(runTime);
+            renderBunny(runTime);
+            renderScoreEffects();
+            renderScore();
+        } else if (gameWorld.isSplash()) {
+            renderSplash();
+        } else if (gameWorld.isInstructions()) {
+            renderInstructions();
+        }
     }
 
     private void renderBunny(float runTime) {
@@ -106,11 +112,8 @@ public class GameRenderer {
         batcher.begin();
         batcher.enableBlending();
         for (Bell bell: bells) {
-            if (bell.isDying()) {
-                batcher.setColor(1, 1, 1, bell.getTransparency());
-            } else {
-                batcher.setColor(1, 1, 1, 1);
-            }
+            Color color = bell.getColor();
+            batcher.setColor(color);
             batcher.draw(AssetLoader.bell, bell.getX(), camTop - bell.getY() - bell.getHeight(), bell.getWidth() / 2.0f, 0,
                     bell.getWidth(), bell.getHeight(), 1, 1, bell.getRotation());
         }
@@ -129,8 +132,10 @@ public class GameRenderer {
                 batcher.setColor(1, 1, 1, 1);
             }
             boolean facingRight = bird.isFacingRight();
-            batcher.draw((facingRight ? AssetLoader.birdAnimationr : AssetLoader.birdAnimationl).getKeyFrame(runTime),
-                    bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth(), bird.getHeight());
+//            batcher.draw((facingRight ? AssetLoader.birdAnimationr : AssetLoader.birdAnimationl).getKeyFrame(runTime),
+//                    bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth(), bird.getHeight());
+            batcher.draw(AssetLoader.gift, bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth() / 2.0f, 0,
+                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
         }
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
@@ -161,7 +166,25 @@ public class GameRenderer {
 
         uiBatcher.begin();
         uiBatcher.enableBlending();
+        uiBatcher.setColor(1, 1, 1, gameWorld.getSplashTransparency());
         uiBatcher.draw(AssetLoader.splashScreen, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
+        uiBatcher.setColor(1, 1, 1, 1);
+        uiBatcher.disableBlending();
+        uiBatcher.end();
+    }
+
+    private void renderInstructions() {
+        float splashWidth = AssetLoader.instructions.getRegionWidth();
+        float splashHeight = AssetLoader.instructions.getRegionHeight();
+        float aspectRatio = splashHeight / splashWidth;
+
+        float sizeDifference = (Gdx.graphics.getWidth() * aspectRatio) - Gdx.graphics.getHeight();
+
+        uiBatcher.begin();
+        uiBatcher.enableBlending();
+        uiBatcher.setColor(1, 1, 1, gameWorld.getSplashTransparency());
+        uiBatcher.draw(AssetLoader.instructions, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
+        uiBatcher.setColor(1, 1, 1, 1);
         uiBatcher.disableBlending();
         uiBatcher.end();
     }

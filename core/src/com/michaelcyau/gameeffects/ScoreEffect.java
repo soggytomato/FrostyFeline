@@ -29,6 +29,7 @@ public class ScoreEffect {
     private float driftSpeed = -20;
     private float transparency = 1;
     private float fadeOutSpeed = 2;
+    private Color color;
 
     private GameWorld gameWorld;
 
@@ -44,6 +45,7 @@ public class ScoreEffect {
         layout.setText(AssetLoader.scoreFont, text);
         width = layout.width;
         height = layout.height;
+        color = col.getColor().cpy();
         initStars();
     }
 
@@ -51,6 +53,7 @@ public class ScoreEffect {
         position.add(velocity.cpy().scl(delta));
         updateStars(delta);
         validate(delta);
+        color.a = transparency;
     }
 
     public void render(SpriteBatch batcher, SpriteBatch uiBatcher, ShapeRenderer shapeRenderer) {
@@ -66,12 +69,11 @@ public class ScoreEffect {
 
         uiBatcher.begin();
         uiBatcher.enableBlending();
-        Color c = AssetLoader.scoreFont.getColor();
-        AssetLoader.scoreFont.setColor(c.r, c.g, c.b, transparency);
+        AssetLoader.scoreFont.setColor(color);
         AssetLoader.scoreFont.draw(uiBatcher, text,
                 adjustedPositionX,
                 adjustedPositionY + Gdx.graphics.getHeight() - (gameWorld.getWorldTop() * scalingFactor));
-        AssetLoader.scoreFont.setColor(c.r, c.g, c.b, 1);
+        AssetLoader.scoreFont.setColor(1, 1, 1, 1);
         uiBatcher.disableBlending();
         uiBatcher.end();
     }
@@ -87,7 +89,7 @@ public class ScoreEffect {
         float angle = 0;
         float increment = numStars > 0 ? 360f / numStars : 0;
         for (int i = 0; i < numStars; i++) {
-            stars.add(new Star(position.x, position.y, angle, gameWorld, initStarSpeed, initStarAccel, driftSpeed, fadeOutSpeed));
+            stars.add(new Star(position.x, position.y, angle, gameWorld, initStarSpeed, initStarAccel, driftSpeed, fadeOutSpeed, color));
             angle += increment;
         }
     }

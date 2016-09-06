@@ -8,6 +8,7 @@ import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
+import com.michaelcyau.helpers.AssetLoader;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -16,6 +17,12 @@ import java.util.List;
 import java.util.Locale;
 
 public class GameWorld {
+
+    private GameState currentState;
+
+    public enum GameState {
+        SPLASH, INSTRUCTIONS, RUNNING, GAMEOVER
+    }
 
     private int numSnowflakes = 40;
 
@@ -37,9 +44,9 @@ public class GameWorld {
     private List<Bird> deadBirds;
     private Collectible topCollectible;
     private float newestBellPositionY;
-    private float bellSize = 14f;
-    private float minBellSize = 7f;
-    private float bellShrinkAmount = 0.007f;
+    private float bellSize = 12f;
+    private float minBellSize = 6f;
+    private float bellShrinkAmount = 0.006f;
     private int newBells = 0;
     private int lastBirdBellNum = 0;
     private int birdInterval = 40;
@@ -56,13 +63,19 @@ public class GameWorld {
 
     private BigInteger score = new BigInteger("0");
     private BigInteger nextScoreAdded = new BigInteger("10");
-    private boolean gameOver = false;
+    private boolean started = false;
+
+    private float splashTransparency = 0;
+    private float splashFadeSpeed = 1f;
+    private float splashDuration = 1;
+    private float splashRunTime = 0;
 
     public GameWorld(int gameWidth, int gameHeight) {
+        currentState = GameState.SPLASH;
         this.gameHeight = gameHeight;
         this.gameWidth = gameWidth;
         worldTop = gameHeight;
-        bunny = new Bunny(68, 0, this);
+        bunny = new Bunny(gameWidth/2, 0, this);
         initSnowflakes();
         initBells();
         initBirds();
@@ -71,6 +84,60 @@ public class GameWorld {
     }
 
     public void update(float delta) {
+        switch (currentState) {
+            case SPLASH:
+                updateSplash(delta);
+                break;
+            case INSTRUCTIONS:
+                updateInstructions(delta);
+                break;
+            case RUNNING:
+            case GAMEOVER:
+                updateRunning(delta);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void updateSplash(float delta) {
+        if (splashRunTime < splashDuration) {
+            if (splashTransparency + (splashFadeSpeed * delta) < 1) {
+                splashTransparency += splashFadeSpeed * delta;
+            } else {
+                splashTransparency = 1;
+            }
+            splashRunTime += delta;
+        } else {
+            if (splashTransparency - (splashFadeSpeed * delta) > 0) {
+                splashTransparency -= splashFadeSpeed * delta;
+            } else {
+                splashTransparency = 0;
+                currentState = GameState.INSTRUCTIONS;
+            }
+        }
+    }
+
+    public void updateInstructions(float delta) {
+        if (!started) {
+            if (splashTransparency + (splashFadeSpeed * delta) < 1) {
+                splashTransparency += splashFadeSpeed * delta;
+            } else {
+                splashTransparency = 1;
+            }
+        } else {
+            if (splashTransparency - (splashFadeSpeed * delta) > 0) {
+                splashTransparency -= splashFadeSpeed * delta;
+            } else {
+                splashTransparency = 0;
+                currentState = GameState.RUNNING;
+                AssetLoader.bgMusic.play();
+            }
+        }
+
+    }
+
+    public void updateRunning(float delta) {
         updateBunny(delta);
         updateSnowflakes(delta);
         updateBells(delta);
@@ -123,12 +190,32 @@ public class GameWorld {
         return bottomBuffer;
     }
 
+    public float getSplashTransparency() {
+        return splashTransparency;
+    }
+
     public boolean isGameOver() {
-        return gameOver;
+        return currentState == GameState.GAMEOVER;
+    }
+
+    public boolean isSplash() {
+        return currentState == GameState.SPLASH;
+    }
+
+    public boolean isInstructions() {
+        return currentState == GameState.INSTRUCTIONS;
+    }
+
+    public boolean isRunning() {
+        return currentState == GameState.RUNNING;
     }
 
     public String getScore() {
         return NumberFormat.getNumberInstance(Locale.US).format(score);
+    }
+
+    public BigInteger getBigIntScore() {
+        return score;
     }
 
     public void recycleSnowflake(Snowflake snowflake) {
@@ -152,13 +239,22 @@ public class GameWorld {
     }
 
     public void endGame() {
-        gameOver = true;
+        if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
+            AssetLoader.setHighScore(score.toString());
+            AssetLoader.prefs.flush();
+        }
+        currentState = GameState.GAMEOVER;
+        System.out.println("High score: " + AssetLoader.getHighScore());
+    }
+
+    public void start() {
+        started = true;
     }
 
     private void initBells() {
         bells = new LinkedList<Bell>();
         deadBells = new LinkedList<Bell>();
-        newestBellPositionY = gameHeight * 0.1f;
+        newestBellPositionY = gameWidth * 0.3f;
         while (newestBellPositionY < gameHeight * (1 + topBuffer)) {
             newestBellPositionY += (gameWidth * bellInterval);
             Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);

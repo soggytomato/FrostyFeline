@@ -10,7 +10,6 @@ public class FFGame extends Game {
 	public void create() {
 		AssetLoader.load();
 		setScreen(new GameScreen());
-		AssetLoader.bgMusic.play();
 	}
 
 	@Override

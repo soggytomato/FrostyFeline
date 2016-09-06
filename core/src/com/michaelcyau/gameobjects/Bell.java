@@ -1,5 +1,6 @@
 package com.michaelcyau.gameobjects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -20,10 +21,11 @@ public class Bell implements Collectible {
     private float width;
     private float height;
 
-    private float transparency = 1;
-    private float fadeOutSpeed = 2;
+    private float transparency = 1.0f;
+    private float fadeOutSpeed = 2.0f;
     private float fadeOutLocation = 0.3f;
     private boolean dying = false;
+    private Color color;
 
     private GameWorld gameWorld;
 
@@ -41,17 +43,24 @@ public class Bell implements Collectible {
         rotation_a = maxRotation_a;
         rotation_v = 0;
         boundingCircle = new Circle();
+        color = new Color((MathUtils.random() + 2) / 3, (MathUtils.random() + 2) / 3, (MathUtils.random() + 2) / 3, transparency);
     }
 
     public void update(float delta) {
         velocity.add(acceleration.cpy().scl(delta));
         position.add(velocity.cpy().scl(delta));
-
         swing(delta);
-
         boundingCircle.set(position.x, position.y, width / 2);
-
         validate(delta);
+        if (dying) {
+            System.out.println("BEFORE TRANSPARENCY: " + transparency);
+            System.out.println("BEFORE COLOR.A: " + color.a);
+        }
+        color.a = transparency;
+        if (dying) {
+            System.out.println("AFTER TRANSPARENCY: " + transparency);
+            System.out.println("AFTER COLOR.A: " + color.a);
+        }
     }
 
     public float getX() {
@@ -82,6 +91,10 @@ public class Bell implements Collectible {
         return boundingCircle;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
     public boolean isDying() {
         return dying;
     }
@@ -93,7 +106,7 @@ public class Bell implements Collectible {
     }
 
     public void playSound() {
-        AssetLoader.ring.setVolume(AssetLoader.ring.play(), 0.8f);
+        AssetLoader.ring.setVolume(AssetLoader.ring.play(), 0.7f);
     }
 
     private void swing(float delta) {
@@ -108,12 +121,14 @@ public class Bell implements Collectible {
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
             gameWorld.removeBell(this);
-        } else if (position.y < gameWorld.getWidth() * fadeOutLocation || dying) {
-            if (transparency - (fadeOutSpeed * delta) >= 0) {
-                transparency -= (fadeOutSpeed * delta);
+        } else if (dying) {
+            //transparency -= fadeOutSpeed * delta;
+            if (transparency - (fadeOutSpeed * delta) > 0) {
+                transparency -= fadeOutSpeed * delta;
             } else {
                 gameWorld.removeBell(this);
             }
+        } else if (position.y < gameWorld.getWidth() * fadeOutLocation) {
             dying = true;
         }
     }

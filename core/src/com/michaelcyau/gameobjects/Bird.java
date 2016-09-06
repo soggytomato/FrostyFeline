@@ -1,5 +1,6 @@
 package com.michaelcyau.gameobjects;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -12,12 +13,18 @@ public class Bird implements Collectible {
     private Vector2 velocity;
     private Vector2 acceleration;
 
-    public static float width = 15.3f;
-    public static float height = 12f;
+    public static float width = 12f; // 15.3f
+    public static float height = 12f; // 12f
 
+    private float initRotation = 10;
+    private float maxRotation_a = 50;
+    private float rotation;
+    private float rotation_v;
+    private float rotation_a;
     private float transparency = 1;
     private float fadeOutSpeed = 1.5f;
     private boolean dying = false;
+    private Color color;
 
     private GameWorld gameWorld;
 
@@ -25,10 +32,14 @@ public class Bird implements Collectible {
 
     public Bird(float x, float y, GameWorld gameWorld) {
         position = new Vector2(x, y);
-        velocity = new Vector2(MathUtils.randomSign() * 14f, -6f);
+        velocity = new Vector2(MathUtils.randomSign() * 10f, -6f);
         acceleration = new Vector2(0, 0);
         this.gameWorld = gameWorld;
         boundingCircle = new Circle();
+        color = new Color(1, 1, 1, transparency);
+        rotation = -initRotation;
+        rotation_a = maxRotation_a;
+        rotation_v = 0;
     }
 
     public void update(float delta) {
@@ -38,6 +49,7 @@ public class Bird implements Collectible {
         if (!dying && ((velocity.x > 0 && position.x + width > (gameWorld.getWidth() * 0.94f)) || (velocity.x < 0 && position.x < (gameWorld.getWidth() * 0.03f)))) {
             velocity.x = -velocity.x;
         }
+        swing(delta);
         validate(delta);
     }
 
@@ -65,8 +77,16 @@ public class Bird implements Collectible {
         return transparency;
     }
 
+    public float getRotation() {
+        return rotation;
+    }
+
     public Circle getBoundingCircle() {
         return boundingCircle;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public boolean isDying() {
@@ -79,8 +99,17 @@ public class Bird implements Collectible {
 
     public void die() {
         dying = true;
-        acceleration.set(velocity.x > 0 ? 300 : -300, 300);
+        acceleration.y = 400;
         velocity.y = -150;
+    }
+
+    private void swing(float delta) {
+        float oldRotation = rotation;
+        rotation_v += rotation_a * delta;
+        rotation += rotation_v * delta;
+        if (oldRotation <= 0 && rotation > 0 || oldRotation >= 0 && rotation < 0) {
+            rotation_a = -rotation_a;
+        }
     }
 
     private void validate(float delta) {

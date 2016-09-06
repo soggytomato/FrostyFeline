@@ -1,6 +1,7 @@
 package com.michaelcyau.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,8 +13,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class AssetLoader {
 
-    public static Texture bunnyTexture, bellTexture, starTexture;
-    public static TextureRegion bunnyRight, bunnyLeft, bell, star;
+    public static Texture bunnyTexture, bellTexture, starTexture, giftTexture;
+    public static TextureRegion bunnyRight, bunnyLeft, bell, star, gift;
     public static Texture birdTexture;
     public static Animation birdAnimationr, birdAnimationl;
     public static TextureRegion bird1r, bird2r, bird3r, bird4r, bird5r, bird6r, bird7r, bird8r;
@@ -27,12 +28,14 @@ public class AssetLoader {
     public static int maxScoreFontSize = 128;
     public static int maxScreenWidth = 2160;
 
-    public static Texture splashScreenTexture;
-    public static TextureRegion splashScreen;
+    public static Texture splashScreenTexture, instructionsTexture;
+    public static TextureRegion splashScreen, instructions;
+
+    public static Preferences prefs;
 
     public static void load() {
         bunnyTexture = new Texture(Gdx.files.internal("data/bunny.png"));
-        bellTexture = new Texture(Gdx.files.internal("data/bell.png"));
+        bellTexture = new Texture(Gdx.files.internal("data/bell4.png"));
         starTexture = new Texture(Gdx.files.internal("data/star.png"));
         bunnyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bellTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -49,12 +52,12 @@ public class AssetLoader {
         star = new TextureRegion(starTexture);
         star.flip(false, true);
 
-        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("mus/young_love.mp3"));
+        bgMusic = Gdx.audio.newMusic(Gdx.files.internal("mus/Good_Starts.mp3"));
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
 
-        ring = Gdx.audio.newSound(Gdx.files.internal("mus/ring3.wav"));
-        doubleScore = Gdx.audio.newSound(Gdx.files.internal("mus/Rise03.wav"));
+        ring = Gdx.audio.newSound(Gdx.files.internal("mus/ring10.wav"));
+        doubleScore = Gdx.audio.newSound(Gdx.files.internal("mus/ring5.wav"));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BubblegumSans-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -71,6 +74,10 @@ public class AssetLoader {
         splashScreenTexture = new Texture(Gdx.files.internal("data/splash.png"));
         splashScreenTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         splashScreen = new TextureRegion(splashScreenTexture);
+
+        instructionsTexture = new Texture(Gdx.files.internal("data/splash2.png"));
+        instructionsTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        instructions = new TextureRegion(instructionsTexture);
 
         birdTexture = new Texture(Gdx.files.internal("data/bird.png"));
         birdTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -114,6 +121,26 @@ public class AssetLoader {
         TextureRegion[] birdsl = { bird1l, bird2l, bird3l, bird4l, bird5l, bird6l, bird7l, bird8l };
         birdAnimationl = new Animation(0.16f, birdsl);
         birdAnimationl.setPlayMode(Animation.PlayMode.LOOP);
+
+        giftTexture = new Texture(Gdx.files.internal("data/gift2.png"));
+        giftTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        gift = new TextureRegion(giftTexture);
+        gift.flip(false, true);
+
+        prefs = Gdx.app.getPreferences("FrostyFriends");
+
+        if (!prefs.contains("highScore")) {
+            prefs.putString("highScore", "0");
+        }
+    }
+
+    public static void setHighScore(String val) {
+        prefs.putString("highScore", val);
+        prefs.flush();
+    }
+
+    public static String getHighScore() {
+        return prefs.getString("highScore");
     }
 
     public static void dispose() {

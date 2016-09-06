@@ -14,7 +14,7 @@ public class Bunny {
     private Vector2 position;
     private Vector2 velocity;
     private Vector2 acceleration;
-    private int targetX;
+    private float targetX;
     // how quickly the bunny moves towards the cursor
     private int horizontalForce = 8;
 
@@ -28,6 +28,7 @@ public class Bunny {
 
     public Bunny(float x, float y, GameWorld gameWorld) {
         position = new Vector2(x, y);
+        targetX = position.x;
         velocity = new Vector2(0, 0);
         acceleration = new Vector2(0, -300);
         boundingCircle = new Circle();
@@ -97,7 +98,7 @@ public class Bunny {
     }
 
     private void checkForDeathSequence() {
-        if (position.y < gameWorld.getWorldTopMax() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer())) && !gameWorld.isGameOver()) {
+        if (position.y == 0 && gameWorld.getBigIntScore().signum() == 1) {
             gameWorld.endGame();
         }
     }

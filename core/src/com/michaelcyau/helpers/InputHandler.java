@@ -4,15 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.michaelcyau.frostyfriends.FFGame;
 import com.michaelcyau.gameobjects.Bunny;
+import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.screens.GameScreen;
 
 public class InputHandler implements InputProcessor {
 
+    private GameWorld gameWorld;
     private Bunny myBunny;
     private float scaleFactor;
 
-    public InputHandler(Bunny bunny, float scaleFactor) {
-        myBunny = bunny;
+    public InputHandler(GameWorld gameWorld, float scaleFactor) {
+        this.gameWorld = gameWorld;
+        myBunny = gameWorld.getBunny();
         this.scaleFactor = scaleFactor;
     }
 
@@ -33,9 +36,17 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        myBunny.onclick();
-        myBunny.setTargetX((int) (screenX / scaleFactor));
-        return true;
+        if (gameWorld.isRunning()) {
+            myBunny.onclick();
+            myBunny.setTargetX((int) (screenX / scaleFactor));
+            return true;
+        } else if (gameWorld.isInstructions()) {
+            gameWorld.start();
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
@@ -45,14 +56,22 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        myBunny.setTargetX((int) (screenX / scaleFactor));
-        return true;
+        if (gameWorld.isRunning()) {
+            myBunny.setTargetX((int) (screenX / scaleFactor));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        myBunny.setTargetX((int) (screenX / scaleFactor));
-        return true;
+        if (gameWorld.isRunning()) {
+            myBunny.setTargetX((int) (screenX / scaleFactor));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
