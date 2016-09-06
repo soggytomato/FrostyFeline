@@ -5,6 +5,7 @@ import com.michaelcyau.gameobjects.Bell;
 import com.michaelcyau.gameobjects.Bird;
 import com.michaelcyau.gameobjects.Bunny;
 import com.michaelcyau.gameeffects.ScoreEffect;
+import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
 
@@ -34,11 +35,15 @@ public class GameWorld {
     private List<Bell> deadBells;
     private List<Bird> birds;
     private List<Bird> deadBirds;
-    private Bell topBell;
+    private Collectible topCollectible;
     private float newestBellPositionY;
     private float bellSize = 14f;
     private float minBellSize = 7f;
     private float bellShrinkAmount = 0.007f;
+    private int newBells = 0;
+    private int lastBirdBellNum = 0;
+    private int birdInterval = 40;
+    private int birdIntervalIncrement = 10;
 
     private List<ScoreEffect> scoreEffects;
     private List<ScoreEffect> deadScoreEffects;
@@ -63,6 +68,7 @@ public class GameWorld {
         initBirds();
         scoreEffects = new LinkedList<ScoreEffect>();
         deadScoreEffects = new LinkedList<ScoreEffect>();
+        birds.add(new Bird(gameWidth/2, gameHeight/2, this));
     }
 
     public void update(float delta) {
@@ -157,7 +163,8 @@ public class GameWorld {
             newestBellPositionY += (gameWidth * bellInterval);
             Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
             bells.add(bell);
-            topBell = bell;
+            topCollectible = bell;
+            newBells++;
         }
         deadBells = new LinkedList<Bell>();
     }
@@ -218,16 +225,25 @@ public class GameWorld {
         }
         if (worldTop > newestBellPositionY + (gameWidth * bellInterval)) {
             newestBellPositionY += gameWidth * bellInterval;
-            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
-            bells.add(bell);
-            topBell = bell;
-            bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
+            if (newBells > lastBirdBellNum + birdInterval) {
+                Bird bird = new Bird((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - Bird.width), newestBellPositionY, this);
+                birds.add(bird);
+                topCollectible = bird;
+                lastBirdBellNum = newBells;
+                birdInterval += birdIntervalIncrement;
+            } else {
+                Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
+                bells.add(bell);
+                topCollectible = bell;
+                bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
+            }
             bellInterval = bellInterval + bellIntervalGrowthAmount > bellMaxInterval ? bellMaxInterval : bellInterval + bellIntervalGrowthAmount;
+            newBells++;
         }
-        if (topBell.getY() < newestBellPositionY - (gameWidth * bellInterval)) {
+        if (topCollectible.getY() < newestBellPositionY - (gameWidth * bellInterval)) {
             Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
             bells.add(bell);
-            topBell = bell;
+            topCollectible = bell;
             bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
             bellInterval = bellInterval + bellIntervalGrowthAmount > bellMaxInterval ? bellMaxInterval : bellInterval + bellIntervalGrowthAmount;
         }
@@ -259,6 +275,7 @@ public class GameWorld {
                     !bell.isDying()) {
                 if (Intersector.overlaps(bunny.getBoundingCircle(), bell.getBoundingCircle())) {
                     bunny.jump();
+                    bell.playSound();
                     bell.die();
                     score = score.add(nextScoreAdded);
                     scoreEffects.add(new ScoreEffect(bell.getX(), bell.getY() + bellSize, bell, NumberFormat.getNumberInstance(Locale.US).format(nextScoreAdded), this));
@@ -270,5 +287,23 @@ public class GameWorld {
             bells.remove(bell);
         }
         deadBells.clear();
+        for (Bird bird: birds) {
+            if (bunny.getY() >= bird.getY() - bellSize - bunny.getHeight() &&
+                    bunny.getY() <= bird.getY() + bellSize &&
+                    !bird.isDying()) {
+                if (Intersector.overlaps(bunny.getBoundingCircle(), bird.getBoundingCircle())) {
+                    bunny.jump();
+                    bird.playSound();
+                    bird.die();
+                    score = score.multiply(new BigInteger("2"));
+                    scoreEffects.add(new ScoreEffect(bird.getX(), bird.getY() + bellSize, bird, "Double Score!", this));
+                    nextScoreAdded = nextScoreAdded.add(BigInteger.TEN);
+                }
+            }
+        }
+        for (Bird bird: deadBirds) {
+            birds.remove(bird);
+        }
+        deadBirds.clear();
     }
 }

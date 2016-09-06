@@ -15,10 +15,11 @@ public class AssetLoader {
     public static Texture bunnyTexture, bellTexture, starTexture;
     public static TextureRegion bunnyRight, bunnyLeft, bell, star;
     public static Texture birdTexture;
-    public static Animation birdAnimation;
-    public static TextureRegion bird1, bird2, bird3, bird4, bird5, bird6, bird7, bird8;
+    public static Animation birdAnimationr, birdAnimationl;
+    public static TextureRegion bird1r, bird2r, bird3r, bird4r, bird5r, bird6r, bird7r, bird8r;
+    public static TextureRegion bird1l, bird2l, bird3l, bird4l, bird5l, bird6l, bird7l, bird8l;
     public static Music bgMusic;
-    public static Sound ring;
+    public static Sound ring, doubleScore;
     public static BitmapFont font;
     public static BitmapFont scoreFont;
 
@@ -53,6 +54,7 @@ public class AssetLoader {
         bgMusic.setVolume(0.5f);
 
         ring = Gdx.audio.newSound(Gdx.files.internal("mus/ring3.wav"));
+        doubleScore = Gdx.audio.newSound(Gdx.files.internal("mus/Rise03.wav"));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BubblegumSans-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -72,27 +74,46 @@ public class AssetLoader {
 
         birdTexture = new Texture(Gdx.files.internal("data/bird.png"));
         birdTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        bird1 = new TextureRegion(birdTexture, 0, 0, 255, 200);
-        bird2 = new TextureRegion(birdTexture, 255, 0, 255, 200);
-        bird3 = new TextureRegion(birdTexture, 510, 0, 255, 200);
-        bird4 = new TextureRegion(birdTexture, 765, 0, 255, 200);
-        bird5 = new TextureRegion(birdTexture, 0, 200, 255, 200);
-        bird6 = new TextureRegion(birdTexture, 255, 200, 255, 200);
-        bird7 = new TextureRegion(birdTexture, 510, 200, 255, 200);
-        bird8 = new TextureRegion(birdTexture, 765, 200, 255, 200);
-        bird1.flip(false, true);
-        bird2.flip(false, true);
-        bird3.flip(false, true);
-        bird4.flip(false, true);
-        bird5.flip(false, true);
-        bird6.flip(false, true);
-        bird7.flip(false, true);
-        bird8.flip(false, true);
+        bird1r = new TextureRegion(birdTexture, 0, 0, 255, 200);
+        bird2r = new TextureRegion(birdTexture, 255, 0, 255, 200);
+        bird3r = new TextureRegion(birdTexture, 510, 0, 255, 200);
+        bird4r = new TextureRegion(birdTexture, 765, 0, 255, 200);
+        bird5r = new TextureRegion(birdTexture, 0, 200, 255, 200);
+        bird6r = new TextureRegion(birdTexture, 255, 200, 255, 200);
+        bird7r = new TextureRegion(birdTexture, 510, 200, 255, 200);
+        bird8r = new TextureRegion(birdTexture, 765, 200, 255, 200);
+        bird1r.flip(false, true);
+        bird2r.flip(false, true);
+        bird3r.flip(false, true);
+        bird4r.flip(false, true);
+        bird5r.flip(false, true);
+        bird6r.flip(false, true);
+        bird7r.flip(false, true);
+        bird8r.flip(false, true);
+        bird1l = new TextureRegion(birdTexture, 0, 0, 255, 200);
+        bird2l = new TextureRegion(birdTexture, 255, 0, 255, 200);
+        bird3l = new TextureRegion(birdTexture, 510, 0, 255, 200);
+        bird4l = new TextureRegion(birdTexture, 765, 0, 255, 200);
+        bird5l = new TextureRegion(birdTexture, 0, 200, 255, 200);
+        bird6l = new TextureRegion(birdTexture, 255, 200, 255, 200);
+        bird7l = new TextureRegion(birdTexture, 510, 200, 255, 200);
+        bird8l = new TextureRegion(birdTexture, 765, 200, 255, 200);
+        bird1l.flip(true, true);
+        bird2l.flip(true, true);
+        bird3l.flip(true, true);
+        bird4l.flip(true, true);
+        bird5l.flip(true, true);
+        bird6l.flip(true, true);
+        bird7l.flip(true, true);
+        bird8l.flip(true, true);
 
-        TextureRegion[] birds = { bird1, bird2, bird3, bird4, bird5, bird6, bird7, bird8 };
-        birdAnimation = new Animation(0.106f, birds);
-        birdAnimation.setPlayMode(Animation.PlayMode.LOOP);
+        TextureRegion[] birdsr = { bird1r, bird2r, bird3r, bird4r, bird5r, bird6r, bird7r, bird8r };
+        birdAnimationr = new Animation(0.16f, birdsr);
+        birdAnimationr.setPlayMode(Animation.PlayMode.LOOP);
 
+        TextureRegion[] birdsl = { bird1l, bird2l, bird3l, bird4l, bird5l, bird6l, bird7l, bird8l };
+        birdAnimationl = new Animation(0.16f, birdsl);
+        birdAnimationl.setPlayMode(Animation.PlayMode.LOOP);
     }
 
     public static void dispose() {

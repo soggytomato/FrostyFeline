@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameobjects.Bell;
+import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.AssetLoader;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class ScoreEffect {
     private Vector2 position; // CENTER position
     private Vector2 velocity;
-    private String score;
+    private String text;
     private GlyphLayout layout;
     private float width;
     private float height;
@@ -34,13 +35,13 @@ public class ScoreEffect {
     private int numStars = 18;
     private List<Star> stars;
 
-    public ScoreEffect (float x, float y, Bell bell, String score, GameWorld gameWorld) {
-        position = new Vector2(x + (bell.getWidth() / 2), y - (bell.getHeight() / 2));
+    public ScoreEffect (float x, float y, Collectible col, String text, GameWorld gameWorld) {
+        position = new Vector2(x + (col.getWidth() / 2), y - (col.getHeight() / 2));
         velocity = new Vector2(0, 0);
-        this.score = score;
+        this.text = text;
         this.gameWorld = gameWorld;
         layout = new GlyphLayout();
-        layout.setText(AssetLoader.scoreFont, score);
+        layout.setText(AssetLoader.scoreFont, text);
         width = layout.width;
         height = layout.height;
         initStars();
@@ -67,7 +68,7 @@ public class ScoreEffect {
         uiBatcher.enableBlending();
         Color c = AssetLoader.scoreFont.getColor();
         AssetLoader.scoreFont.setColor(c.r, c.g, c.b, transparency);
-        AssetLoader.scoreFont.draw(uiBatcher, score,
+        AssetLoader.scoreFont.draw(uiBatcher, text,
                 adjustedPositionX,
                 adjustedPositionY + Gdx.graphics.getHeight() - (gameWorld.getWorldTop() * scalingFactor));
         AssetLoader.scoreFont.setColor(c.r, c.g, c.b, 1);

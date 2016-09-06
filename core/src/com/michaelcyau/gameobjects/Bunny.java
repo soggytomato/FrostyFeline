@@ -57,7 +57,6 @@ public class Bunny {
 
     public void jump() {
         velocity.y = 200;
-        AssetLoader.ring.setVolume(AssetLoader.ring.play(), 0.8f);
     }
 
     public float getX() {

@@ -58,6 +58,7 @@ public class GameRenderer {
 
         renderSnowflakes();
         renderBells();
+        renderBirds(runTime);
         renderBunny(runTime);
         renderScoreEffects();
         renderScore();
@@ -112,6 +113,24 @@ public class GameRenderer {
             }
             batcher.draw(AssetLoader.bell, bell.getX(), camTop - bell.getY() - bell.getHeight(), bell.getWidth() / 2.0f, 0,
                     bell.getWidth(), bell.getHeight(), 1, 1, bell.getRotation());
+        }
+        batcher.setColor(1, 1, 1, 1);
+        batcher.disableBlending();
+        batcher.end();
+    }
+
+    private void renderBirds(float runTime) {
+        batcher.begin();
+        batcher.enableBlending();
+        for (Bird bird: birds) {
+            if (bird.isDying()) {
+                batcher.setColor(1, 1, 1, bird.getTransparency());
+            } else {
+                batcher.setColor(1, 1, 1, 1);
+            }
+            boolean facingRight = bird.isFacingRight();
+            batcher.draw((facingRight ? AssetLoader.birdAnimationr : AssetLoader.birdAnimationl).getKeyFrame(runTime),
+                    bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth(), bird.getHeight());
         }
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();

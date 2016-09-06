@@ -4,8 +4,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;
+import com.michaelcyau.helpers.AssetLoader;
 
-public class Bell {
+public class Bell implements Collectible {
 
     private Vector2 position;
     private Vector2 velocity;
@@ -89,6 +90,10 @@ public class Bell {
         dying = true;
         acceleration.y = 400;
         velocity.y = -150;
+    }
+
+    public void playSound() {
+        AssetLoader.ring.setVolume(AssetLoader.ring.play(), 0.8f);
     }
 
     private void swing(float delta) {
