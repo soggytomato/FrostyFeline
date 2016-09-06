@@ -52,15 +52,7 @@ public class Bell implements Collectible {
         swing(delta);
         boundingCircle.set(position.x, position.y, width / 2);
         validate(delta);
-        if (dying) {
-            System.out.println("BEFORE TRANSPARENCY: " + transparency);
-            System.out.println("BEFORE COLOR.A: " + color.a);
-        }
         color.a = transparency;
-        if (dying) {
-            System.out.println("AFTER TRANSPARENCY: " + transparency);
-            System.out.println("AFTER COLOR.A: " + color.a);
-        }
     }
 
     public float getX() {
