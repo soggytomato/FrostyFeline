@@ -68,7 +68,6 @@ public class GameWorld {
         initBirds();
         scoreEffects = new LinkedList<ScoreEffect>();
         deadScoreEffects = new LinkedList<ScoreEffect>();
-        birds.add(new Bird(gameWidth/2, gameHeight/2, this));
     }
 
     public void update(float delta) {
@@ -158,6 +157,7 @@ public class GameWorld {
 
     private void initBells() {
         bells = new LinkedList<Bell>();
+        deadBells = new LinkedList<Bell>();
         newestBellPositionY = gameHeight * 0.1f;
         while (newestBellPositionY < gameHeight * (1 + topBuffer)) {
             newestBellPositionY += (gameWidth * bellInterval);
@@ -166,7 +166,6 @@ public class GameWorld {
             topCollectible = bell;
             newBells++;
         }
-        deadBells = new LinkedList<Bell>();
     }
 
     private void initBirds() {

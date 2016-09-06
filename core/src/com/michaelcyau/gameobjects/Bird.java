@@ -25,7 +25,7 @@ public class Bird implements Collectible {
 
     public Bird(float x, float y, GameWorld gameWorld) {
         position = new Vector2(x, y);
-        velocity = new Vector2(MathUtils.randomSign() * 12f, -6f);
+        velocity = new Vector2(MathUtils.randomSign() * 14f, -6f);
         acceleration = new Vector2(0, 0);
         this.gameWorld = gameWorld;
         boundingCircle = new Circle();

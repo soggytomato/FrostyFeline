@@ -12,8 +12,8 @@ public class Bell implements Collectible {
     private Vector2 velocity;
     private Vector2 acceleration;
 
-    private float maxRotation = 10;
-    private float maxRotation_a = 20;
+    private float initRotation = 10;
+    private float maxRotation_a = 50;
     private float rotation;
     private float rotation_v;
     private float rotation_a;
@@ -37,9 +37,9 @@ public class Bell implements Collectible {
         acceleration = new Vector2(0, 0);
         this.gameWorld = gameWorld;
         // this is probably more complicated that it needs to be
-        rotation = -maxRotation + MathUtils.random(2 * maxRotation);
-        rotation_a = rotation > 0 ? -maxRotation_a : maxRotation_a;
-        rotation_v = rotation_a * (1 - Math.abs(rotation / maxRotation));
+        rotation = -initRotation; // fix randomness later
+        rotation_a = maxRotation_a;
+        rotation_v = 0;
         boundingCircle = new Circle();
     }
 
