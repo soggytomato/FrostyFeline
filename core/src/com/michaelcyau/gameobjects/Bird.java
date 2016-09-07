@@ -13,8 +13,8 @@ public class Bird implements Collectible {
     private Vector2 velocity;
     private Vector2 acceleration;
 
-    public static float width = 12f; // 15.3f
-    public static float height = 12f; // 12f
+    public static float width = 11f; // 15.3f
+    public static float height = 11f; // 12f
 
     private float initRotation = 10;
     private float maxRotation_a = 50;

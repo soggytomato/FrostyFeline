@@ -241,10 +241,8 @@ public class GameWorld {
     public void endGame() {
         if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
             AssetLoader.setHighScore(score.toString());
-            AssetLoader.prefs.flush();
         }
         currentState = GameState.GAMEOVER;
-        System.out.println("High score: " + AssetLoader.getHighScore());
     }
 
     public void start() {

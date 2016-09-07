@@ -122,7 +122,7 @@ public class AssetLoader {
         birdAnimationl = new Animation(0.16f, birdsl);
         birdAnimationl.setPlayMode(Animation.PlayMode.LOOP);
 
-        giftTexture = new Texture(Gdx.files.internal("data/gift2.png"));
+        giftTexture = new Texture(Gdx.files.internal("data/gift.png"));
         giftTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         gift = new TextureRegion(giftTexture);
         gift.flip(false, true);
@@ -131,11 +131,13 @@ public class AssetLoader {
 
         if (!prefs.contains("highScore")) {
             prefs.putString("highScore", "0");
+            prefs.flush();
         }
     }
 
     public static void setHighScore(String val) {
         prefs.putString("highScore", val);
+        prefs.flush();
     }
 
     public static String getHighScore() {

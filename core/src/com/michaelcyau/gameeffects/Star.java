@@ -36,7 +36,7 @@ public class Star {
         this.gameWorld = gameWorld;
         this.driftSpeed = driftSpeed;
         this.fadeOutSpeed = fadeOutSpeed;
-        this.color = color;
+        this.color = color.cpy();
     }
 
     public void update(float delta) {

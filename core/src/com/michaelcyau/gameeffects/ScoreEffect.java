@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameobjects.Bell;
 import com.michaelcyau.gameobjects.Collectible;
@@ -36,6 +37,8 @@ public class ScoreEffect {
     private int numStars = 18;
     private List<Star> stars;
 
+    private Collectible col;
+
     public ScoreEffect (float x, float y, Collectible col, String text, GameWorld gameWorld) {
         position = new Vector2(x + (col.getWidth() / 2), y - (col.getHeight() / 2));
         velocity = new Vector2(0, 0);
@@ -46,6 +49,7 @@ public class ScoreEffect {
         width = layout.width;
         height = layout.height;
         color = col.getColor().cpy();
+        this.col = col;
         initStars();
     }
 

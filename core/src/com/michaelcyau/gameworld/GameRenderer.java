@@ -57,13 +57,15 @@ public class GameRenderer {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (gameWorld.isRunning() || gameWorld.isGameOver()) {
+        if (gameWorld.isRunning()) {
             renderSnowflakes();
             renderBells();
             renderBirds(runTime);
             renderBunny(runTime);
             renderScoreEffects();
             renderScore();
+        } else if (gameWorld.isGameOver()) {
+
         } else if (gameWorld.isSplash()) {
             renderSplash();
         } else if (gameWorld.isInstructions()) {
