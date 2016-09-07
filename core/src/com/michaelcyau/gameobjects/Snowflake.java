@@ -1,5 +1,6 @@
 package com.michaelcyau.gameobjects;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.MathUtils;
 import com.michaelcyau.gameworld.GameWorld;
@@ -31,6 +32,11 @@ public class Snowflake {
         validate(delta);
     }
 
+    public void render(ShapeRenderer shapeRenderer, float camTop) {
+        shapeRenderer.setColor(1, 1, 1, opacity);
+        shapeRenderer.circle(position.x, camTop - position.y, radius);
+    }
+
     public float getX() {
         return position.x;
     }
@@ -48,10 +54,21 @@ public class Snowflake {
     }
 
     private void validate(float delta) {
+        boolean reset = false;
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
-            gameWorld.recycleSnowflake(this);
+            position.set(MathUtils.random(gameWorld.getWidth()), gameWorld.getWorldTop());
+            reset = true;
         } else if (position.y > gameWorld.getWorldTop()) {
-            gameWorld.recycleBottomSnowflake(this);
+            position.set(MathUtils.random(gameWorld.getWidth()),
+                    gameWorld.getWorldTop() - gameWorld.getHeight() + (MathUtils.random(gameWorld.getBunny().getVelocity().y) * delta));
+            reset = true;
+        }
+
+        if (reset) {
+            velocity.set(0, -(8f + MathUtils.random(6f)));
+            acceleration.set(0, 0);
+            radius = 0.5f + MathUtils.random(0.3f);
+            opacity = 0.5f + MathUtils.random(0.4f);
         }
     }
 }

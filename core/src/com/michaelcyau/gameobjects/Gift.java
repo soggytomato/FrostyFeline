@@ -1,13 +1,14 @@
 package com.michaelcyau.gameobjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.AssetLoader;
 
-public class Bird implements Collectible {
+public class Gift implements Collectible {
 
     private Vector2 position;
     private Vector2 velocity;
@@ -30,7 +31,7 @@ public class Bird implements Collectible {
 
     private Circle boundingCircle;
 
-    public Bird(float x, float y, GameWorld gameWorld) {
+    public Gift(float x, float y, GameWorld gameWorld) {
         position = new Vector2(x, y);
         velocity = new Vector2(MathUtils.randomSign() * 10f, -6f);
         acceleration = new Vector2(0, 0);
@@ -49,8 +50,15 @@ public class Bird implements Collectible {
         if (!dying && ((velocity.x > 0 && position.x + width > (gameWorld.getWidth() * 0.94f)) || (velocity.x < 0 && position.x < (gameWorld.getWidth() * 0.03f)))) {
             velocity.x = -velocity.x;
         }
+        color.a = transparency;
         swing(delta);
         validate(delta);
+    }
+
+    public void render(SpriteBatch batcher, float camTop) {
+        batcher.setColor(color);
+        batcher.draw(AssetLoader.gift, position.x, camTop - position.y - height, width / 2.0f, 0,
+                width, height, 1, 1, rotation);
     }
 
     public void playSound() {
@@ -114,12 +122,12 @@ public class Bird implements Collectible {
 
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
-            gameWorld.removeBird(this);
+            gameWorld.removeCollectible(this);
         } else if (dying) {
             if (transparency - (fadeOutSpeed * delta) >= 0) {
                 transparency -= (fadeOutSpeed * delta);
             } else {
-                gameWorld.removeBird(this);
+                gameWorld.removeCollectible(this);
             }
         }
     }

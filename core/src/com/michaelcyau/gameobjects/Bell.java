@@ -1,6 +1,7 @@
 package com.michaelcyau.gameobjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -53,6 +54,12 @@ public class Bell implements Collectible {
         boundingCircle.set(position.x, position.y, width / 2);
         validate(delta);
         color.a = transparency;
+    }
+
+    public void render(SpriteBatch batcher, float camTop) {
+        batcher.setColor(color);
+        batcher.draw(AssetLoader.bell, position.x, camTop - position.y - height, width / 2.0f, 0,
+                width, height, 1, 1, rotation);
     }
 
     public float getX() {
@@ -112,13 +119,13 @@ public class Bell implements Collectible {
 
     private void validate(float delta) {
         if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
-            gameWorld.removeBell(this);
+            gameWorld.removeCollectible(this);
         } else if (dying) {
             //transparency -= fadeOutSpeed * delta;
             if (transparency - (fadeOutSpeed * delta) > 0) {
                 transparency -= fadeOutSpeed * delta;
             } else {
-                gameWorld.removeBell(this);
+                gameWorld.removeCollectible(this);
             }
         } else if (position.y < gameWorld.getWidth() * fadeOutLocation) {
             dying = true;

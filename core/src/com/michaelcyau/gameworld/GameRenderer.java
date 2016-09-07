@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.michaelcyau.gameobjects.Bell;
-import com.michaelcyau.gameobjects.Bird;
+import com.michaelcyau.gameobjects.Collectible;
+import com.michaelcyau.gameobjects.Gift;
 import com.michaelcyau.gameobjects.Bunny;
 import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
@@ -27,16 +28,14 @@ public class GameRenderer {
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
-    private List<Bell> bells;
-    private List<Bird> birds;
+    private List<Collectible> collectibles;
     private List<ScoreEffect> scoreEffects;
 
     public GameRenderer (GameWorld gameWorld) {
         this.gameWorld = gameWorld;
         bunny = gameWorld.getBunny();
         snowflakes = gameWorld.getSnowflakes();
-        bells = gameWorld.getBells();
-        birds = gameWorld.getBirds();
+        collectibles = gameWorld.getCollectibles();
         scoreEffects = gameWorld.getScoreEffects();
 
         cam = new OrthographicCamera();
@@ -58,91 +57,50 @@ public class GameRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         switch (gameWorld.getCurrentState()) {
+            case GAMEOVER:
+                renderGameOverlay();
+                // continue
+            case RUNNING:
+                renderSnowflakes();
+                renderCollectibles();
+                renderBunny();
+                renderScoreEffects();
+                renderScore();
+                break;
+            case INSTRUCTIONS:
+                renderInstructions();
+                break;
             case SPLASH:
-                
-        }
-
-        if (gameWorld.isRunning()) {
-            renderSnowflakes();
-            renderBells();
-            renderBirds(runTime);
-            renderBunny(runTime);
-            renderScoreEffects();
-            renderScore();
-        } else if (gameWorld.isGameOver()) {
-
-        } else if (gameWorld.isSplash()) {
-            renderSplash();
-        } else if (gameWorld.isInstructions()) {
-            renderInstructions();
+                renderSplash();
+                break;
+            default:
+                break;
         }
     }
 
-    private void renderBunny(float runTime) {
-        boolean facingRight = bunny.isFacingRight();
+    private void renderBunny() {
         batcher.begin();
         batcher.enableBlending();
-
-        batcher.draw((facingRight ? AssetLoader.bunnyRight : AssetLoader.bunnyLeft),
-                bunny.getX(), camTop - bunny.getY() - bunny.getHeight(), bunny.getWidth(), bunny.getHeight());
-
-//        batcher.draw(AssetLoader.birdAnimation.getKeyFrame(runTime),
-//                bunny.getX(), camTop - bunny.getY() - bunny.getHeight(), bunny.getWidth(), bunny.getHeight());
-
+        bunny.render(batcher, camTop);
         batcher.disableBlending();
         batcher.end();
-
-//        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
-//        shapeRenderer.begin(ShapeType.Filled);
-//        shapeRenderer.setColor(1, 0, 0, 0.5f);
-//        shapeRenderer.circle(bunny.getBoundingCircle().x + bunny.getBoundingCircle().radius,
-//                camTop - bunny.getBoundingCircle().y - bunny.getBoundingCircle().radius,
-//                bunny.getBoundingCircle().radius);
-//        shapeRenderer.end();
-//        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
     }
 
     private void renderSnowflakes() {
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         shapeRenderer.begin(ShapeType.Filled);
         for (Snowflake snowflake: snowflakes) {
-            if (snowflake.getY() < gameWorld.getWorldTop() && snowflake.getY() > gameWorld.getWorldTop() - gameWorld.getHeight()) {
-                shapeRenderer.setColor(1, 1, 1, snowflake.getOpacity());
-                shapeRenderer.circle(snowflake.getX(), camTop - snowflake.getY(), snowflake.getRadius());
-            }
+            snowflake.render(shapeRenderer, camTop);
         }
         shapeRenderer.end();
         Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
     }
 
-    private void renderBells() {
+    private void renderCollectibles() {
         batcher.begin();
         batcher.enableBlending();
-        for (Bell bell: bells) {
-            Color color = bell.getColor();
-            batcher.setColor(color);
-            batcher.draw(AssetLoader.bell, bell.getX(), camTop - bell.getY() - bell.getHeight(), bell.getWidth() / 2.0f, 0,
-                    bell.getWidth(), bell.getHeight(), 1, 1, bell.getRotation());
-        }
-        batcher.setColor(1, 1, 1, 1);
-        batcher.disableBlending();
-        batcher.end();
-    }
-
-    private void renderBirds(float runTime) {
-        batcher.begin();
-        batcher.enableBlending();
-        for (Bird bird: birds) {
-            if (bird.isDying()) {
-                batcher.setColor(1, 1, 1, bird.getTransparency());
-            } else {
-                batcher.setColor(1, 1, 1, 1);
-            }
-            boolean facingRight = bird.isFacingRight();
-//            batcher.draw((facingRight ? AssetLoader.birdAnimationr : AssetLoader.birdAnimationl).getKeyFrame(runTime),
-//                    bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth(), bird.getHeight());
-            batcher.draw(AssetLoader.gift, bird.getX(), camTop - bird.getY() - bird.getHeight(), bird.getWidth() / 2.0f, 0,
-                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
+        for (Collectible col: collectibles) {
+            col.render(batcher, camTop);
         }
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
@@ -151,7 +109,7 @@ public class GameRenderer {
 
     private void renderScoreEffects() {
         for (ScoreEffect scoreEffect: scoreEffects) {
-            scoreEffect.render(batcher, uiBatcher, shapeRenderer);
+            scoreEffect.render(batcher, uiBatcher, camTop);
         }
     }
 
@@ -194,5 +152,9 @@ public class GameRenderer {
         uiBatcher.setColor(1, 1, 1, 1);
         uiBatcher.disableBlending();
         uiBatcher.end();
+    }
+
+    private void renderGameOverlay() {
+
     }
 }

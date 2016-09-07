@@ -1,5 +1,7 @@
 package com.michaelcyau.gameobjects;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;
@@ -48,6 +50,11 @@ public class Bunny {
         boundingCircle.set(position.x, position.y, 6.5f);
 
         checkForDeathSequence();
+    }
+
+    public void render(SpriteBatch batcher, float camTop) {
+        batcher.draw((facingRight ? AssetLoader.bunnyRight : AssetLoader.bunnyLeft),
+                position.x, camTop - position.y - height, width, height);
     }
 
     public void onclick() {

@@ -60,12 +60,12 @@ public class ScoreEffect {
         color.a = transparency;
     }
 
-    public void render(SpriteBatch batcher, SpriteBatch uiBatcher, ShapeRenderer shapeRenderer) {
-        renderScore(uiBatcher);
-        renderStars(batcher);
+    public void render(SpriteBatch batcher, SpriteBatch uiBatcher, float camTop) {
+        renderScore(uiBatcher, camTop);
+        renderStars(batcher, camTop);
     }
 
-    private void renderScore(SpriteBatch uiBatcher) {
+    private void renderScore(SpriteBatch uiBatcher, float camTop) {
         float scalingFactor = (float) Gdx.graphics.getWidth() / (float) gameWorld.getWidth();
 
         float adjustedPositionX = (position.x * scalingFactor) - (width / 2);
@@ -76,15 +76,15 @@ public class ScoreEffect {
         AssetLoader.scoreFont.setColor(color);
         AssetLoader.scoreFont.draw(uiBatcher, text,
                 adjustedPositionX,
-                adjustedPositionY + Gdx.graphics.getHeight() - (gameWorld.getWorldTop() * scalingFactor));
+                adjustedPositionY + Gdx.graphics.getHeight() - (camTop * scalingFactor));
         AssetLoader.scoreFont.setColor(1, 1, 1, 1);
         uiBatcher.disableBlending();
         uiBatcher.end();
     }
 
-    private void renderStars(SpriteBatch batcher) {
+    private void renderStars(SpriteBatch batcher, float camTop) {
         for (Star star: stars) {
-            star.render(batcher);
+            star.render(batcher, camTop);
         }
     }
 

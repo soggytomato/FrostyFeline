@@ -40,7 +40,7 @@ public class Star {
     }
 
     public void update(float delta) {
-        velocity.add(acceleration.cpy().scl(delta));
+        velocity.add(acceleration.x * delta, acceleration.y * delta);
         if (!dying && (velocity.x <= 0 && initVelocity.x > 0 || velocity.x >= 0 && initVelocity.x < 0)) {
             velocity.set(0, driftSpeed);
             acceleration.set(0, 0);
@@ -53,16 +53,16 @@ public class Star {
                 transparency = 0;
             }
         }
-        position.add(velocity.cpy().scl(delta));
+        position.add(velocity.x * delta, velocity.y * delta);
         rotation += rotation_v * delta;
         color.a = transparency;
     }
 
-    public void render(SpriteBatch batcher) {
+    public void render(SpriteBatch batcher, float camTop) {
         batcher.begin();
         batcher.enableBlending();
         batcher.setColor(color);
-        batcher.draw(AssetLoader.star, position.x - (width / 2), gameWorld.getWorldTop() - position.y - (height / 2), width / 2, height / 2,
+        batcher.draw(AssetLoader.star, position.x - (width / 2), camTop - position.y - (height / 2), width / 2, height / 2,
                 width, height, 1, 1, rotation);
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
