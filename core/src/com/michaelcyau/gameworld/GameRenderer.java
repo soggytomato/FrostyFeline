@@ -57,6 +57,11 @@ public class GameRenderer {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        switch (gameWorld.getCurrentState()) {
+            case SPLASH:
+                
+        }
+
         if (gameWorld.isRunning()) {
             renderSnowflakes();
             renderBells();

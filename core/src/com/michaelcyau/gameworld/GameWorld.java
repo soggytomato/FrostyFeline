@@ -85,22 +85,24 @@ public class GameWorld {
 
     public void update(float delta) {
         switch (currentState) {
+            case GAMEOVER:
+                updateGameOver(delta);
+                // continue running
+            case RUNNING:
+                updateRunning(delta);
+                break;
             case SPLASH:
                 updateSplash(delta);
                 break;
             case INSTRUCTIONS:
                 updateInstructions(delta);
                 break;
-            case RUNNING:
-            case GAMEOVER:
-                updateRunning(delta);
-                break;
             default:
                 break;
         }
     }
 
-    public void updateSplash(float delta) {
+    private void updateSplash(float delta) {
         if (splashRunTime < splashDuration) {
             if (splashTransparency + (splashFadeSpeed * delta) < 1) {
                 splashTransparency += splashFadeSpeed * delta;
@@ -118,7 +120,7 @@ public class GameWorld {
         }
     }
 
-    public void updateInstructions(float delta) {
+    private void updateInstructions(float delta) {
         if (!started) {
             if (splashTransparency + (splashFadeSpeed * delta) < 1) {
                 splashTransparency += splashFadeSpeed * delta;
@@ -135,6 +137,10 @@ public class GameWorld {
             }
         }
 
+    }
+
+    private void updateGameOver(float delta) {
+        // do something
     }
 
     public void updateRunning(float delta) {
@@ -192,6 +198,10 @@ public class GameWorld {
 
     public float getSplashTransparency() {
         return splashTransparency;
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
     }
 
     public boolean isGameOver() {
