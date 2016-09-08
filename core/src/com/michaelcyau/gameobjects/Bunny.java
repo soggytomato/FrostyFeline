@@ -16,6 +16,7 @@ public class Bunny {
     private Vector2 position;
     private Vector2 velocity;
     private Vector2 acceleration;
+    private float gravity = -320;
     private float targetX;
     // how quickly the bunny moves towards the cursor
     private float horizontalForce = 8;
@@ -32,7 +33,7 @@ public class Bunny {
         position = new Vector2(x, y);
         targetX = position.x;
         velocity = new Vector2(0, 0);
-        acceleration = new Vector2(0, -300);
+        acceleration = new Vector2(0, gravity);
         boundingCircle = new Circle();
         this.gameWorld = gameWorld;
     }

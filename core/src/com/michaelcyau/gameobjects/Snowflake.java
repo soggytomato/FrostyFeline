@@ -55,12 +55,12 @@ public class Snowflake {
 
     private void validate(float delta) {
         boolean reset = false;
-        if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight())) {
-            position.set(MathUtils.random(gameWorld.getWidth()), gameWorld.getWorldTop());
+        if (position.y < gameWorld.getWorldTop() - (2 * gameWorld.getHeight())) { // buffer of 1 screen height
+            position.set(MathUtils.random(gameWorld.getWidth()), gameWorld.getWorldTop() + gameWorld.getHeight());
             reset = true;
-        } else if (position.y > gameWorld.getWorldTop()) {
+        } else if (position.y > gameWorld.getWorldTop() + gameWorld.getHeight()) { // buffer of 1 screen height
             position.set(MathUtils.random(gameWorld.getWidth()),
-                    gameWorld.getWorldTop() - gameWorld.getHeight() + (MathUtils.random(gameWorld.getBunny().getVelocity().y) * delta));
+                    gameWorld.getWorldTop() - (2 * gameWorld.getHeight()) + (MathUtils.random(gameWorld.getBunny().getVelocity().y) * delta));
             reset = true;
         }
 

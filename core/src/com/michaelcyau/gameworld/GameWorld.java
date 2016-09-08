@@ -24,10 +24,10 @@ public class GameWorld {
         SPLASH, INSTRUCTIONS, RUNNING, GAMEOVER
     }
 
-    private int numSnowflakes = 40;
+    private int numSnowflakes = 50;
 
-    private float panUpBoundary = 0.6f; // as a fraction of screen height
-    private float panDownBoundary = 0.4f; // as a fraction of screen height
+    private float panUpBoundary = 0.60f; // as a fraction of screen height
+    private float panDownBoundary = 0.60f; // as a fraction of screen height
     private float bottomBuffer = 0.3f; // as a fraction of screen height
     private float topBuffer = 0.5f; // as a fraction of screen height
     private float bellInterval = 0.25f; // as a factor of GAME WIDTH (not screen width)
@@ -259,7 +259,7 @@ public class GameWorld {
     private void initSnowflakes() {
         snowflakes = new LinkedList<Snowflake>();
         for (int i = 0; i < numSnowflakes; i++) {
-            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), MathUtils.random(gameHeight), this));
+            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), MathUtils.random(-gameHeight, 2 * gameHeight), this));
         }
     }
 

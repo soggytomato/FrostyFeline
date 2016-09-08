@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.michaelcyau.gameobjects.Bell;
 import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameobjects.Gift;
@@ -25,8 +26,7 @@ public class GameRenderer {
 
     private SpriteBatch batcher, uiBatcher;
     private float camTop;
-    private float camVelocity;
-    private float panSpeed = 12; // how quickly the camera follows the bunny.
+    private float panSpeed = 5f; // how quickly the camera follows the bunny.
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
@@ -83,8 +83,7 @@ public class GameRenderer {
     }
 
     private void moveCamera(float delta) {
-        camVelocity = panSpeed * (gameWorld.getWorldTop() - camTop);
-        camTop += camVelocity * delta;
+        camTop += panSpeed * (gameWorld.getWorldTop() - camTop) * delta;
     }
 
     private void renderBunny() {
