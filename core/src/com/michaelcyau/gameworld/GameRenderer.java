@@ -27,6 +27,7 @@ public class GameRenderer {
     private SpriteBatch batcher, uiBatcher;
     private float camTop;
     private float panSpeed = 5f; // how quickly the camera follows the bunny.
+    private float bunnyMaxBottomPan = 0.5f; // multiple of screen height below bottom
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
@@ -83,7 +84,13 @@ public class GameRenderer {
     }
 
     private void moveCamera(float delta) {
-        camTop += panSpeed * (gameWorld.getWorldTop() - camTop) * delta;
+        float y = gameWorld.getBunny().getY();
+        if (y > 0 && y < camTop - (gameWorld.getHeight() * (1 + bunnyMaxBottomPan))) {
+            camTop += gameWorld.getBunny().getVelocity().y * delta;
+        } else {
+            camTop += panSpeed * (gameWorld.getWorldTop() - camTop) * delta;
+        }
+
     }
 
     private void renderBunny() {
