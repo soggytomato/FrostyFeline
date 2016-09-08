@@ -55,7 +55,7 @@ public class Snowflake {
 
     private void validate(float delta) {
         boolean reset = false;
-        if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight() * (1 + gameWorld.getBottomBuffer()))) {
+        if (position.y < gameWorld.getWorldTop() - (gameWorld.getHeight())) {
             position.set(MathUtils.random(gameWorld.getWidth()), gameWorld.getWorldTop());
             reset = true;
         } else if (position.y > gameWorld.getWorldTop()) {

@@ -18,7 +18,7 @@ public class Bunny {
     private Vector2 acceleration;
     private float targetX;
     // how quickly the bunny moves towards the cursor
-    private int horizontalForce = 8;
+    private float horizontalForce = 8;
 
     private float rotation;
 

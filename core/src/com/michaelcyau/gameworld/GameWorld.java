@@ -27,12 +27,13 @@ public class GameWorld {
     private int numSnowflakes = 40;
 
     private float panUpBoundary = 0.6f; // as a fraction of screen height
-    private float panDownBoundary = 0.3f; // as a fraction of screen height
+    private float panDownBoundary = 0.4f; // as a fraction of screen height
     private float bottomBuffer = 0.3f; // as a fraction of screen height
     private float topBuffer = 0.5f; // as a fraction of screen height
     private float bellInterval = 0.25f; // as a factor of GAME WIDTH (not screen width)
     private float bellMaxInterval = 0.4f;
     private float bellIntervalGrowthAmount = 0.00015f;
+    private float collectibleXBoundary = 0.03f;
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
@@ -303,13 +304,14 @@ public class GameWorld {
         if (worldTop > newestBellPositionY + (gameWidth * bellInterval)) {
             newestBellPositionY += gameWidth * bellInterval;
             if (newBells > lastBirdBellNum + birdInterval) {
-                Gift gift = new Gift((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - Gift.width), newestBellPositionY, this);
+                Gift gift = new Gift((gameWidth * collectibleXBoundary) + MathUtils.random((gameWidth * (1 - 2 * collectibleXBoundary)) - Gift.width), newestBellPositionY, this);
                 collectibles.add(gift);
                 topCollectible = gift;
                 lastBirdBellNum = newBells;
                 birdInterval += birdIntervalIncrement;
             } else {
-                Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
+                Bell bell = new Bell((gameWidth * collectibleXBoundary) + MathUtils.random((gameWidth * (1 - 2 * collectibleXBoundary)) - bellSize),
+                        newestBellPositionY, bellSize, bellSize, this);
                 collectibles.add(bell);
                 topCollectible = bell;
                 bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;
@@ -318,7 +320,8 @@ public class GameWorld {
             newBells++;
         }
         if (topCollectible.getY() < newestBellPositionY - (gameWidth * bellInterval)) {
-            Bell bell = new Bell((gameWidth * 0.03f) + MathUtils.random((gameWidth * 0.94f) - bellSize), newestBellPositionY, bellSize, bellSize, this);
+            Bell bell = new Bell((gameWidth * collectibleXBoundary) + MathUtils.random((gameWidth * (1 - 2 * collectibleXBoundary)) - bellSize),
+                    newestBellPositionY, bellSize, bellSize, this);
             collectibles.add(bell);
             topCollectible = bell;
             bellSize = bellSize - bellShrinkAmount < minBellSize ? minBellSize : bellSize - bellShrinkAmount;

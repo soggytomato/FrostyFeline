@@ -25,6 +25,8 @@ public class GameRenderer {
 
     private SpriteBatch batcher, uiBatcher;
     private float camTop;
+    private float camVelocity;
+    private float panSpeed = 12; // how quickly the camera follows the bunny.
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
@@ -48,10 +50,12 @@ public class GameRenderer {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(cam.combined);
+
+        camTop = gameWorld.getWorldTop();
     }
 
-    public void render(float runTime) {
-        camTop = gameWorld.getWorldTop();
+    public void render(float delta, float runTime) {
+        moveCamera(delta);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -76,6 +80,11 @@ public class GameRenderer {
             default:
                 break;
         }
+    }
+
+    private void moveCamera(float delta) {
+        camVelocity = panSpeed * (gameWorld.getWorldTop() - camTop);
+        camTop += camVelocity * delta;
     }
 
     private void renderBunny() {
