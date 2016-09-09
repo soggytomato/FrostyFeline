@@ -9,27 +9,35 @@ import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
 import com.michaelcyau.helpers.AssetLoader;
+import com.michaelcyau.overlays.LogoScreen;
+import com.michaelcyau.overlays.ScreenOverlay;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Stack;
 
 public class GameWorld {
 
     private GameState currentState;
 
     public enum GameState {
-        SPLASH, INSTRUCTIONS, RUNNING, GAMEOVER
+        SPLASH, INSTRUCTIONS, READY, RUNNING, GAMEOVER
     }
 
     private int numSnowflakes = 50;
 
-    private float panUpBoundary = 0.60f; // as a fraction of screen height
-    private float panDownBoundary = 0.60f; // as a fraction of screen height
+    // Height at which the camera starts moving up or down. panUpBoundary should be greater
+    // than or equal to panDownBoundary
+    private float panUpBoundary = 0.50f; // as a fraction of screen height
+    private float panDownBoundary = 0.50f; // as a fraction of screen height
+
+    // Height past the bottom or top where bells are removed or generated
     private float bottomBuffer = 0.3f; // as a fraction of screen height
     private float topBuffer = 0.5f; // as a fraction of screen height
+
     private float bellInterval = 0.25f; // as a factor of GAME WIDTH (not screen width)
     private float bellMaxInterval = 0.4f;
     private float bellIntervalGrowthAmount = 0.00015f;
@@ -52,6 +60,9 @@ public class GameWorld {
     private List<ScoreEffect> scoreEffects;
     private List<ScoreEffect> deadScoreEffects;
 
+    // just one overlay for now
+    private ScreenOverlay overlay;
+
     private int gameWidth;
     private int gameHeight;
 
@@ -69,6 +80,7 @@ public class GameWorld {
 
     public GameWorld(int gameWidth, int gameHeight) {
         currentState = GameState.SPLASH;
+        overlay = new LogoScreen(this);
         this.gameHeight = gameHeight;
         this.gameWidth = gameWidth;
         worldTop = gameHeight;
@@ -76,7 +88,6 @@ public class GameWorld {
         initSnowflakes();
         initCollectibles();
         initScoreEffects();
-
     }
 
     public void update(float delta) {
@@ -87,56 +98,20 @@ public class GameWorld {
             case RUNNING:
                 updateRunning(delta);
                 break;
-            case SPLASH:
-                updateSplash(delta);
-                break;
-            case INSTRUCTIONS:
-                updateInstructions(delta);
-                break;
             default:
                 break;
         }
-    }
-
-    private void updateSplash(float delta) {
-        if (splashRunTime < splashDuration) {
-            if (splashTransparency + (splashFadeSpeed * delta) < 1) {
-                splashTransparency += splashFadeSpeed * delta;
-            } else {
-                splashTransparency = 1;
-            }
-            splashRunTime += delta;
-        } else {
-            if (splashTransparency - (splashFadeSpeed * delta) > 0) {
-                splashTransparency -= splashFadeSpeed * delta;
-            } else {
-                splashTransparency = 0;
-                currentState = GameState.INSTRUCTIONS;
-            }
-        }
-    }
-
-    private void updateInstructions(float delta) {
-        if (!started) {
-            if (splashTransparency + (splashFadeSpeed * delta) < 1) {
-                splashTransparency += splashFadeSpeed * delta;
-            } else {
-                splashTransparency = 1;
-            }
-        } else {
-            if (splashTransparency - (splashFadeSpeed * delta) > 0) {
-                splashTransparency -= splashFadeSpeed * delta;
-            } else {
-                splashTransparency = 0;
-                currentState = GameState.RUNNING;
-                AssetLoader.bgMusic.play();
-            }
-        }
-
+        updateOverlays(delta);
     }
 
     private void updateGameOver(float delta) {
         // do something
+    }
+
+    private void updateOverlays(float delta) {
+        if (overlay != null) {
+            overlay.update(delta);
+        }
     }
 
     public void updateRunning(float delta) {
@@ -146,6 +121,10 @@ public class GameWorld {
         generateCollectibles();
         updateScoreEffects(delta);
         detectCollisions();
+    }
+
+    public void setCurrentState(GameState state) {
+        currentState = state;
     }
 
     public Bunny getBunny() {
@@ -220,6 +199,10 @@ public class GameWorld {
         return score;
     }
 
+    public ScreenOverlay getOverlay() {
+        return overlay;
+    }
+
     public void removeCollectible(Collectible col) {
         deadCollectibles.add(col);
     }
@@ -237,6 +220,14 @@ public class GameWorld {
 
     public void start() {
         started = true;
+    }
+
+    public void setOverlay(ScreenOverlay overlay) {
+        this.overlay = overlay;
+    }
+
+    public void removeOverlay() {
+        overlay = null;
     }
 
     private void initCollectibles() {

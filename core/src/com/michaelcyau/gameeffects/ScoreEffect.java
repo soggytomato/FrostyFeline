@@ -37,8 +37,6 @@ public class ScoreEffect {
     private int numStars = 18;
     private List<Star> stars;
 
-    private Collectible col;
-
     public ScoreEffect (float x, float y, Collectible col, String text, GameWorld gameWorld) {
         position = new Vector2(x + (col.getWidth() / 2), y - (col.getHeight() / 2));
         velocity = new Vector2(0, 0);
@@ -49,7 +47,6 @@ public class ScoreEffect {
         width = layout.width;
         height = layout.height;
         color = col.getColor().cpy();
-        this.col = col;
         initStars();
     }
 

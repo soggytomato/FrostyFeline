@@ -15,6 +15,7 @@ import com.michaelcyau.gameobjects.Bunny;
 import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.michaelcyau.helpers.AssetLoader;
+import com.michaelcyau.overlays.ScreenOverlay;
 
 import java.util.List;
 
@@ -26,13 +27,23 @@ public class GameRenderer {
 
     private SpriteBatch batcher, uiBatcher;
     private float camTop;
-    private float panSpeed = 5f; // how quickly the camera follows the bunny.
-    private float bunnyMaxBottomPan = 0.5f; // multiple of screen height below bottom
+    private float panSpeed = 4f; // how quickly the camera follows the bunny.
+
+    // During freefall, the camera will drag behind the bunny, and therefore the bunny
+    // will appear further and further down the screen. This is problematic because
+    // snowflakes can only be generated at some finite distance above the bunny's position,
+    // and thus will seemingly 'disappear' if the camera is too far away.
+    // The following value specifies how far past the bottom of the screen the bunny can go
+    // before the camera starts moving exactly at the speed of the bunny and stops dragging
+    // behind. It is represented as a multiple of the screen height.
+    private float bunnyMaxBottomPan = 0.5f;
 
     private Bunny bunny;
     private List<Snowflake> snowflakes;
     private List<Collectible> collectibles;
     private List<ScoreEffect> scoreEffects;
+
+    private ScreenOverlay overlay;
 
     public GameRenderer (GameWorld gameWorld) {
         this.gameWorld = gameWorld;
@@ -63,7 +74,6 @@ public class GameRenderer {
 
         switch (gameWorld.getCurrentState()) {
             case GAMEOVER:
-                renderGameOverlay();
                 // continue
             case RUNNING:
                 renderSnowflakes();
@@ -72,14 +82,13 @@ public class GameRenderer {
                 renderScoreEffects();
                 renderScore();
                 break;
-            case INSTRUCTIONS:
-                renderInstructions();
-                break;
-            case SPLASH:
-                renderSplash();
-                break;
             default:
                 break;
+        }
+
+        overlay = gameWorld.getOverlay();
+        if (overlay != null) {
+            overlay.render(uiBatcher);
         }
     }
 

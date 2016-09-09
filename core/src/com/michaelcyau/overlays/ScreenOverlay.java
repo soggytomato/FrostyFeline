@@ -1,6 +1,7 @@
 package com.michaelcyau.overlays;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.michaelcyau.gameworld.GameWorld;
 
 /**
  * Created by Michael on 9/7/2016.
