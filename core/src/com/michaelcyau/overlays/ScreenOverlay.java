@@ -1,6 +1,7 @@
 package com.michaelcyau.overlays;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.michaelcyau.gameworld.GameWorld;
 
 /**
@@ -9,4 +10,5 @@ import com.michaelcyau.gameworld.GameWorld;
 public interface ScreenOverlay {
     void update(float delta);
     void render(SpriteBatch batcher);
+    void render(ShapeRenderer renderer);
 }

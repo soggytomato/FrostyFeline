@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.AssetLoader;
 
@@ -55,9 +56,13 @@ public class LogoScreen implements ScreenOverlay {
         batcher.begin();
         batcher.enableBlending();
         batcher.setColor(1, 1, 1, transparency);
-        batcher.draw(AssetLoader.splashScreen, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
+        batcher.draw(overlay, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
         batcher.end();
+    }
+
+    public void render(ShapeRenderer renderer) {
+
     }
 }

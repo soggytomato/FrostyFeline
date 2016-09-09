@@ -28,8 +28,8 @@ public class AssetLoader {
     public static int maxScoreFontSize = 128;
     public static int maxScreenWidth = 2160;
 
-    public static Texture splashScreenTexture, instructionsTexture;
-    public static TextureRegion splashScreen, instructions;
+    public static Texture splashScreenTexture, instructionsTexture, instructionsTextureBlack;
+    public static TextureRegion splashScreen, instructions, instructionsBlack;
 
     public static Preferences prefs;
 
@@ -78,6 +78,10 @@ public class AssetLoader {
         instructionsTexture = new Texture(Gdx.files.internal("data/splash2.png"));
         instructionsTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         instructions = new TextureRegion(instructionsTexture);
+
+        instructionsTextureBlack = new Texture(Gdx.files.internal("data/splash2_black.png"));
+        instructionsTextureBlack.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+        instructionsBlack = new TextureRegion(instructionsTextureBlack);
 
         birdTexture = new Texture(Gdx.files.internal("data/bird.png"));
         birdTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);

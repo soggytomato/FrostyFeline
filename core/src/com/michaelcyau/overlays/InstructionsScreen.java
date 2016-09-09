@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.michaelcyau.gameworld.GameWorld;
 import com.michaelcyau.helpers.AssetLoader;
 
@@ -14,8 +15,8 @@ public class InstructionsScreen implements ScreenOverlay {
 
     private float transparency = 0;
     private float fadeSpeed = 2;
-    private float splashRunTime = 0;
-    private float splashDuration = 1;
+    private boolean touched = false;
+    private boolean started = false;
     private GameWorld gameWorld;
     private TextureRegion overlay = AssetLoader.instructions;
 
@@ -24,26 +25,32 @@ public class InstructionsScreen implements ScreenOverlay {
     }
 
     public void update(float delta) {
-        if (splashRunTime == 0 && transparency < 1) {
+        if (!started && !touched && transparency < 1) { // fade in
             if (transparency + (fadeSpeed * delta) < 1) {
                 transparency += fadeSpeed * delta;
             } else {
                 transparency = 1;
             }
-        } else if (transparency == 1 && splashRunTime < splashDuration) {
-            if (splashRunTime + delta < splashDuration) {
-                splashRunTime += delta;
-            } else {
-                splashRunTime = splashDuration;
+        } else if (!started && !touched && transparency == 1) { // poll for screen touch
+            if (gameWorld.getCurrentState() == GameWorld.GameState.READY) {
+                touched = true;
             }
-        } else {
+        } else if (!started && touched && transparency > 0) { // fade out
+            if (transparency - (fadeSpeed * delta) > 0) {
+                transparency -= fadeSpeed * delta;
+            } else {
+                transparency = 1;
+                overlay = AssetLoader.instructionsBlack;
+                started = true;
+                gameWorld.setCurrentState(GameWorld.GameState.RUNNING);
+                AssetLoader.bgMusic.play();
+            }
+        } else { // fade out from black (fade into gameplay)
             if (transparency - (fadeSpeed * delta) > 0) {
                 transparency -= fadeSpeed * delta;
             } else {
                 transparency = 0;
                 gameWorld.removeOverlay();
-                gameWorld.setCurrentState(GameWorld.GameState.RUNNING);
-                AssetLoader.bgMusic.play();
             }
         }
     }
@@ -58,9 +65,13 @@ public class InstructionsScreen implements ScreenOverlay {
         batcher.begin();
         batcher.enableBlending();
         batcher.setColor(1, 1, 1, transparency);
-        batcher.draw(AssetLoader.splashScreen, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
+        batcher.draw(overlay, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
         batcher.setColor(1, 1, 1, 1);
         batcher.disableBlending();
         batcher.end();
+    }
+
+    public void render(ShapeRenderer renderer) {
+
     }
 }

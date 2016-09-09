@@ -36,12 +36,12 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (gameWorld.isRunning()) {
+        if (gameWorld.getCurrentState() == GameWorld.GameState.RUNNING) {
             myBunny.onclick();
             myBunny.setTargetX((int) (screenX / scaleFactor));
             return true;
-        } else if (gameWorld.isInstructions()) {
-            gameWorld.start();
+        } else if (gameWorld.getCurrentState() == GameWorld.GameState.INSTRUCTIONS) {
+            gameWorld.setCurrentState(GameWorld.GameState.READY);
             return true;
         } else {
             return false;
@@ -56,7 +56,7 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if (gameWorld.isRunning()) {
+        if (gameWorld.getCurrentState() == GameWorld.GameState.RUNNING) {
             myBunny.setTargetX((int) (screenX / scaleFactor));
             return true;
         } else {
@@ -66,7 +66,7 @@ public class InputHandler implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        if (gameWorld.isRunning()) {
+        if (gameWorld.getCurrentState() == GameWorld.GameState.RUNNING) {
             myBunny.setTargetX((int) (screenX / scaleFactor));
             return true;
         } else {

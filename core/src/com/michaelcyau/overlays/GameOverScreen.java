@@ -2,6 +2,7 @@ package com.michaelcyau.overlays;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.michaelcyau.gameworld.GameWorld;
 
@@ -30,6 +31,10 @@ public class GameOverScreen implements ScreenOverlay {
     }
 
     public void render(SpriteBatch batcher) {
+
+    }
+
+    public void render(ShapeRenderer renderer) {
 
     }
 }

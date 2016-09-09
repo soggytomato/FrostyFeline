@@ -27,7 +27,7 @@ public class GameWorld {
         SPLASH, INSTRUCTIONS, READY, RUNNING, GAMEOVER
     }
 
-    private int numSnowflakes = 50;
+    private int numSnowflakes = 60;
 
     // Height at which the camera starts moving up or down. panUpBoundary should be greater
     // than or equal to panDownBoundary
@@ -67,16 +67,9 @@ public class GameWorld {
     private int gameHeight;
 
     private float worldTop;
-    private float worldTopMax;
 
     private BigInteger score = new BigInteger("0");
     private BigInteger nextScoreAdded = new BigInteger("10");
-    private boolean started = false;
-
-    private float splashTransparency = 0;
-    private float splashFadeSpeed = 1f;
-    private float splashDuration = 1;
-    private float splashRunTime = 0;
 
     public GameWorld(int gameWidth, int gameHeight) {
         currentState = GameState.SPLASH;
@@ -155,10 +148,6 @@ public class GameWorld {
         return worldTop;
     }
 
-    public float getWorldTopMax() {
-        return worldTopMax;
-    }
-
     public float getTopBuffer() {
         return topBuffer;
     }
@@ -167,28 +156,8 @@ public class GameWorld {
         return bottomBuffer;
     }
 
-    public float getSplashTransparency() {
-        return splashTransparency;
-    }
-
     public GameState getCurrentState() {
         return currentState;
-    }
-
-    public boolean isGameOver() {
-        return currentState == GameState.GAMEOVER;
-    }
-
-    public boolean isSplash() {
-        return currentState == GameState.SPLASH;
-    }
-
-    public boolean isInstructions() {
-        return currentState == GameState.INSTRUCTIONS;
-    }
-
-    public boolean isRunning() {
-        return currentState == GameState.RUNNING;
     }
 
     public String getScore() {
@@ -216,10 +185,6 @@ public class GameWorld {
             AssetLoader.setHighScore(score.toString());
         }
         currentState = GameState.GAMEOVER;
-    }
-
-    public void start() {
-        started = true;
     }
 
     public void setOverlay(ScreenOverlay overlay) {
@@ -272,7 +237,6 @@ public class GameWorld {
                 }
             }
         }
-        worldTopMax = worldTop > worldTopMax ? worldTop : worldTopMax;
     }
 
     private void updateSnowflakes(float delta) {
