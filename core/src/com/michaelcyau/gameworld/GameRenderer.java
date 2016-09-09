@@ -16,6 +16,7 @@ import com.michaelcyau.gameeffects.ScoreEffect;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.michaelcyau.helpers.AssetLoader;
 import com.michaelcyau.overlays.ScreenOverlay;
+import com.michaelcyau.screens.GameScreen;
 
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class GameRenderer {
             case GAMEOVER:
                 // continue
             case RUNNING:
+                renderBackground();
                 renderSnowflakes();
                 renderCollectibles();
                 renderBunny();
@@ -144,5 +146,11 @@ public class GameRenderer {
         AssetLoader.font.draw(uiBatcher, gameWorld.getScore(), offset, Gdx.graphics.getHeight() - offset);
         uiBatcher.disableBlending();
         uiBatcher.end();
+    }
+
+    private void renderBackground() {
+        batcher.begin();
+        batcher.draw(AssetLoader.bg, 0, camTop - gameWorld.getWidth(), gameWorld.getWidth(), gameWorld.getWidth());
+        batcher.end();
     }
 }

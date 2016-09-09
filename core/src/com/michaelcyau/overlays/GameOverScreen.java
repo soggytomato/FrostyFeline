@@ -26,7 +26,7 @@ public class GameOverScreen implements ScreenOverlay {
     private String score;
     private String highScore;
 
-    private float maxBoxTransparency = 0.5f;
+    private float maxBoxTransparency = 0.65f;
     private float maxTextTransparency = 1f;
     private float boxTransparency = 0;
     private float textTransparency = 0;

@@ -44,6 +44,8 @@ public class GameWorld {
     private float bellIntervalGrowthAmount = 0.00015f;
     private float collectibleXBoundary = 0.03f;
 
+    private float floor = 0;
+
     private Bunny bunny;
     private List<Snowflake> snowflakes;
     private List<Collectible> collectibles;
@@ -78,7 +80,7 @@ public class GameWorld {
         this.gameHeight = gameHeight;
         this.gameWidth = gameWidth;
         worldTop = gameHeight;
-        bunny = new Bunny(gameWidth/2, 0, this);
+        bunny = new Bunny(gameWidth/2, floor, this);
         initSnowflakes();
         initCollectibles();
         initScoreEffects();
@@ -151,6 +153,10 @@ public class GameWorld {
         return bottomBuffer;
     }
 
+    public float getFloor() {
+        return floor;
+    }
+
     public GameState getCurrentState() {
         return currentState;
     }
@@ -177,9 +183,6 @@ public class GameWorld {
 
     public void endGame() {
         if (currentState == GameState.RUNNING) {
-            if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
-                AssetLoader.setHighScore(score.toString());
-            }
             currentState = GameState.GAMEOVER;
             overlay = new GameOverScreen(this);
         }
@@ -199,6 +202,9 @@ public class GameWorld {
         newBells = 0;
         lastBirdBellNum = 0;
         birdInterval = 40;
+        if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
+            AssetLoader.setHighScore(score.toString());
+        }
         score = new BigInteger("0");
         nextScoreAdded = new BigInteger("10");
 

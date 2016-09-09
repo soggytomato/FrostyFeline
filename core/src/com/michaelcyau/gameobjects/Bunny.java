@@ -43,8 +43,8 @@ public class Bunny {
         velocity.add(acceleration.cpy().scl(delta));
 
         position.add(velocity.cpy().scl(delta));
-        if (position.y < 0) {
-            position.y = 0;
+        if (position.y < gameWorld.getFloor()) {
+            position.y = gameWorld.getFloor();
             velocity.y = 0;
         }
 
@@ -59,7 +59,7 @@ public class Bunny {
     }
 
     public void onclick() {
-        if (position.y == 0) {
+        if (position.y == gameWorld.getFloor()) {
             velocity.y = 200;
         }
     }
@@ -110,7 +110,7 @@ public class Bunny {
     }
 
     private void checkForDeathSequence() {
-        if (position.y == 0 && gameWorld.getBigIntScore().signum() == 1) {
+        if (position.y == gameWorld.getFloor() && gameWorld.getBigIntScore().signum() == 1) {
             gameWorld.endGame();
         }
     }

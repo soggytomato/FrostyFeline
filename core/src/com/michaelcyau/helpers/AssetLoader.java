@@ -14,6 +14,8 @@ public class AssetLoader {
 
     public static Texture bunnyTexture, bellTexture, starTexture, giftTexture;
     public static TextureRegion bunnyRight, bunnyLeft, bell, star, gift;
+    public static Texture bgTexture;
+    public static TextureRegion bg;
     public static Music bgMusic;
     public static Sound ring, doubleScore;
     public static BitmapFont font;
@@ -35,6 +37,11 @@ public class AssetLoader {
         bunnyTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bellTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         starTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        bgTexture = new Texture(Gdx.files.internal("data/bg.png"));
+        bgTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        bg = new TextureRegion(bgTexture);
+        bg.flip(false, true);
 
         bunnyRight = new TextureRegion(bunnyTexture);
         bunnyRight.flip(false, true);
