@@ -43,6 +43,10 @@ public class InputHandler implements InputProcessor {
         } else if (gameWorld.getCurrentState() == GameWorld.GameState.INSTRUCTIONS) {
             gameWorld.setCurrentState(GameWorld.GameState.READY);
             return true;
+        } else if (gameWorld.getCurrentState() == GameWorld.GameState.GAMEOVER) {
+            gameWorld.reset();
+            gameWorld.setCurrentState(GameWorld.GameState.RUNNING);
+            return true;
         } else {
             return false;
         }

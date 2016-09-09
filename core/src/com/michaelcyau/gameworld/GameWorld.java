@@ -9,6 +9,7 @@ import com.michaelcyau.gameobjects.Collectible;
 import com.michaelcyau.gameobjects.Snowflake;
 import com.badlogic.gdx.math.MathUtils;
 import com.michaelcyau.helpers.AssetLoader;
+import com.michaelcyau.overlays.GameOverScreen;
 import com.michaelcyau.overlays.LogoScreen;
 import com.michaelcyau.overlays.ScreenOverlay;
 
@@ -86,8 +87,6 @@ public class GameWorld {
     public void update(float delta) {
         switch (currentState) {
             case GAMEOVER:
-                updateGameOver(delta);
-                // continue running
             case RUNNING:
                 updateRunning(delta);
                 break;
@@ -95,10 +94,6 @@ public class GameWorld {
                 break;
         }
         updateOverlays(delta);
-    }
-
-    private void updateGameOver(float delta) {
-        // do something
     }
 
     private void updateOverlays(float delta) {
@@ -181,10 +176,13 @@ public class GameWorld {
     }
 
     public void endGame() {
-        if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
-            AssetLoader.setHighScore(score.toString());
+        if (currentState == GameState.RUNNING) {
+            if (score.compareTo(new BigInteger(AssetLoader.getHighScore())) > 0) {
+                AssetLoader.setHighScore(score.toString());
+            }
+            currentState = GameState.GAMEOVER;
+            overlay = new GameOverScreen(this);
         }
-        currentState = GameState.GAMEOVER;
     }
 
     public void setOverlay(ScreenOverlay overlay) {
@@ -193,6 +191,24 @@ public class GameWorld {
 
     public void removeOverlay() {
         overlay = null;
+    }
+
+    public void reset() {
+        bellInterval = 0.25f;
+        bellSize = 12f;
+        newBells = 0;
+        lastBirdBellNum = 0;
+        birdInterval = 40;
+        score = new BigInteger("0");
+        nextScoreAdded = new BigInteger("10");
+
+        snowflakes.clear();
+        for (int i = 0; i < numSnowflakes; i++) {
+            snowflakes.add(new Snowflake(MathUtils.random(gameWidth), MathUtils.random(-gameHeight, 2 * gameHeight), this));
+        }
+        collectibles.clear();
+        scoreEffects.clear();
+        initBells();
     }
 
     private void initCollectibles() {

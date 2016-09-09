@@ -14,7 +14,7 @@ import com.michaelcyau.helpers.AssetLoader;
 public class InstructionsScreen implements ScreenOverlay {
 
     private float transparency = 0;
-    private float fadeSpeed = 2;
+    private float fadeSpeed = 1f;
     private boolean touched = false;
     private boolean started = false;
     private GameWorld gameWorld;

@@ -138,47 +138,11 @@ public class GameRenderer {
     }
 
     private void renderScore() {
-        int offset = (int) (Gdx.graphics.getWidth() * 0.02f);
+        float offset = Gdx.graphics.getWidth() * 0.02f;
         uiBatcher.begin();
         uiBatcher.enableBlending();
         AssetLoader.font.draw(uiBatcher, gameWorld.getScore(), offset, Gdx.graphics.getHeight() - offset);
         uiBatcher.disableBlending();
         uiBatcher.end();
-    }
-
-    private void renderSplash() {
-        float splashWidth = AssetLoader.splashScreen.getRegionWidth();
-        float splashHeight = AssetLoader.splashScreen.getRegionHeight();
-        float aspectRatio = splashHeight / splashWidth;
-
-        float sizeDifference = (Gdx.graphics.getWidth() * aspectRatio) - Gdx.graphics.getHeight();
-
-        uiBatcher.begin();
-        uiBatcher.enableBlending();
-        uiBatcher.setColor(1, 1, 1, gameWorld.getSplashTransparency());
-        uiBatcher.draw(AssetLoader.splashScreen, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
-        uiBatcher.setColor(1, 1, 1, 1);
-        uiBatcher.disableBlending();
-        uiBatcher.end();
-    }
-
-    private void renderInstructions() {
-        float splashWidth = AssetLoader.instructions.getRegionWidth();
-        float splashHeight = AssetLoader.instructions.getRegionHeight();
-        float aspectRatio = splashHeight / splashWidth;
-
-        float sizeDifference = (Gdx.graphics.getWidth() * aspectRatio) - Gdx.graphics.getHeight();
-
-        uiBatcher.begin();
-        uiBatcher.enableBlending();
-        uiBatcher.setColor(1, 1, 1, gameWorld.getSplashTransparency());
-        uiBatcher.draw(AssetLoader.instructions, 0, -(sizeDifference / 2), Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * aspectRatio);
-        uiBatcher.setColor(1, 1, 1, 1);
-        uiBatcher.disableBlending();
-        uiBatcher.end();
-    }
-
-    private void renderGameOverlay() {
-
     }
 }
