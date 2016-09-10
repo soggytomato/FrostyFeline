@@ -52,9 +52,9 @@ public class GameWorld {
     private List<Collectible> deadCollectibles;
     private Collectible topCollectible;
     private float newestBellPositionY;
-    private float bellSize = 12f;
-    private float minBellSize = 6f;
-    private float bellShrinkAmount = 0.006f;
+    private float bellSize = 10f;
+    private float minBellSize = 5f;
+    private float bellShrinkAmount = 0.005f;
     private int newBells = 0;
     private int lastBirdBellNum = 0;
     private int birdInterval = 40;

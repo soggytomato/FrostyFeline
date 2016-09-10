@@ -80,7 +80,7 @@ public class GameRenderer {
                 renderBackground();
                 renderSnowflakes();
                 renderCollectibles();
-                renderBunny();
+                renderBunny(runTime);
                 renderScoreEffects();
                 renderScore();
                 break;
@@ -104,10 +104,10 @@ public class GameRenderer {
 
     }
 
-    private void renderBunny() {
+    private void renderBunny(float runTime) {
         batcher.begin();
         batcher.enableBlending();
-        bunny.render(batcher, camTop);
+        bunny.render(batcher, camTop, runTime);
         batcher.disableBlending();
         batcher.end();
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -27,6 +28,11 @@ public class AssetLoader {
 
     public static Texture splashScreenTexture, instructionsTexture, instructionsTextureBlack;
     public static TextureRegion splashScreen, instructions, instructionsBlack;
+
+    public static Texture catTexture;
+    public static Animation catAnimationR, catAnimationL;
+    public static TextureRegion catR[];
+    public static TextureRegion catL[];
 
     public static Preferences prefs;
 
@@ -89,6 +95,21 @@ public class AssetLoader {
         giftTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         gift = new TextureRegion(giftTexture);
         gift.flip(false, true);
+
+        catTexture = new Texture(Gdx.files.internal("data/sheet.png"));
+        catTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        catR = new TextureRegion[13];
+        catL = new TextureRegion[13];
+        for (int i = 0; i < 13; i++) {
+            catR[i] = new TextureRegion(catTexture, 0, i * 92, 200, 92);
+            catR[i].flip(false, true);
+            catL[i] = new TextureRegion(catTexture, 0, i * 92, 200, 92);
+            catL[i].flip(true, true);
+        }
+        catAnimationR = new Animation(0.033f, catR);
+        catAnimationR.setPlayMode(Animation.PlayMode.LOOP);
+        catAnimationL = new Animation(0.033f, catL);
+        catAnimationL.setPlayMode(Animation.PlayMode.LOOP);
 
         prefs = Gdx.app.getPreferences("FrostyFriends");
 
