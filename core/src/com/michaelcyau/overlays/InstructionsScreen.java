@@ -33,6 +33,7 @@ public class InstructionsScreen implements ScreenOverlay {
             }
         } else if (!started && !touched && transparency == 1) { // poll for screen touch
             if (gameWorld.getCurrentState() == GameWorld.GameState.READY) {
+                AssetLoader.confirm.setVolume(AssetLoader.confirm.play(), 0.2f);
                 touched = true;
             }
         } else if (!started && touched && transparency > 0) { // fade out

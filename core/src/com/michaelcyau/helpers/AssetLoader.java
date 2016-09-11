@@ -18,7 +18,7 @@ public class AssetLoader {
     public static Texture bgTexture;
     public static TextureRegion bg;
     public static Music bgMusic;
-    public static Sound ring, doubleScore;
+    public static Sound ring, doubleScore, confirm;
     public static BitmapFont font;
     public static BitmapFont scoreFont;
 
@@ -71,6 +71,7 @@ public class AssetLoader {
 
         ring = Gdx.audio.newSound(Gdx.files.internal("mus/ring10.wav"));
         doubleScore = Gdx.audio.newSound(Gdx.files.internal("mus/ring5.wav"));
+        confirm = Gdx.audio.newSound(Gdx.files.internal("mus/Item2A.wav"));
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BubblegumSans-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
