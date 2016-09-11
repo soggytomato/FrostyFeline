@@ -12,9 +12,9 @@ import com.michaelcyau.helpers.AssetLoader;
 public class LogoScreen implements ScreenOverlay {
 
     private float transparency = 0;
-    private float fadeSpeed = 2;
+    private float fadeSpeed = 4; // 2
     private float splashRunTime = 0;
-    private float splashDuration = 1;
+    private float splashDuration = 0.1f; //
     private GameWorld gameWorld;
     private TextureRegion overlay = AssetLoader.splashScreen;
 

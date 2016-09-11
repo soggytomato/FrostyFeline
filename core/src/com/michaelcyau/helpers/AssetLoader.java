@@ -30,9 +30,14 @@ public class AssetLoader {
     public static TextureRegion splashScreen, instructions, instructionsBlack;
 
     public static Texture catTexture;
-    public static Animation catAnimationR, catAnimationL;
-    public static TextureRegion catR[];
-    public static TextureRegion catL[];
+    public static Animation catAnimationR, catAnimationL,
+            catStationaryAnimationR, catStationaryAnimationL,
+            catJumpAnimationR, catJumpAnimationL,
+            catFallAnimationR, catFallAnimationL;
+    public static TextureRegion catR[], catL[],
+            catStationaryR[], catStationaryL[],
+            catJumpR[], catJumpL[],
+            catFallR[], catFallL[];
 
     public static Preferences prefs;
 
@@ -96,20 +101,69 @@ public class AssetLoader {
         gift = new TextureRegion(giftTexture);
         gift.flip(false, true);
 
-        catTexture = new Texture(Gdx.files.internal("data/sheet.png"));
+        catTexture = new Texture(Gdx.files.internal("data/cat.png"));
         catTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         catR = new TextureRegion[13];
         catL = new TextureRegion[13];
-        for (int i = 0; i < 13; i++) {
-            catR[i] = new TextureRegion(catTexture, 0, i * 92, 200, 92);
-            catR[i].flip(false, true);
-            catL[i] = new TextureRegion(catTexture, 0, i * 92, 200, 92);
-            catL[i].flip(true, true);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                catR[(4 * i) + j] = new TextureRegion(catTexture, 900 + (j * 225), 500 + (i * 125), 225, 125);
+                catR[(4 * i) + j].flip(false, true);
+                catL[(4 * i) + j] = new TextureRegion(catTexture, 900 + (j * 225), 500 + (i * 125), 225, 125);
+                catL[(4 * i) + j].flip(true, true);
+                if ((4 * i) + j == 12) {
+                    break;
+                }
+            }
         }
         catAnimationR = new Animation(0.033f, catR);
         catAnimationR.setPlayMode(Animation.PlayMode.LOOP);
         catAnimationL = new Animation(0.033f, catL);
         catAnimationL.setPlayMode(Animation.PlayMode.LOOP);
+
+        catStationaryR = new TextureRegion[3];
+        catStationaryL = new TextureRegion[3];
+        for (int i = 0; i < 3; i++) {
+            catStationaryR[i] = new TextureRegion(catTexture, 1125 + (i * 225), 375, 225, 125);
+            catStationaryR[i].flip(false, true);
+            catStationaryL[i] = new TextureRegion(catTexture, 1125 + (i * 225), 375, 225, 125);
+            catStationaryL[i].flip(true, true);
+        }
+        catStationaryAnimationR = new Animation(0.25f, catStationaryR);
+        catStationaryAnimationR.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+        catStationaryAnimationL = new Animation(0.25f, catStationaryL);
+        catStationaryAnimationL.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+
+        catJumpR = new TextureRegion[7];
+        catJumpL = new TextureRegion[7];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 4; j++) {
+                catJumpR[(4 * i) + j] = new TextureRegion(catTexture, (j * 225), 125 + (i * 125), 225, 125);
+                catJumpR[(4 * i) + j].flip(false, true);
+                catJumpL[(4 * i) + j] = new TextureRegion(catTexture, (j * 225), 125 + (i * 125), 225, 125);
+                catJumpL[(4 * i) + j].flip(true, true);
+                if ((4 * i) + j == 6) {
+                    break;
+                }
+            }
+        }
+        catJumpAnimationR = new Animation(0.044f, catJumpR);
+        catJumpAnimationR.setPlayMode(Animation.PlayMode.LOOP);
+        catJumpAnimationL = new Animation(0.044f, catJumpL);
+        catJumpAnimationL.setPlayMode(Animation.PlayMode.LOOP);
+
+        catFallR = new TextureRegion[4];
+        catFallL = new TextureRegion[4];
+        for (int i = 0; i < 4; i++) {
+            catFallR[i] = new TextureRegion(catTexture, 0 + (i * 225), 500, 225, 125);
+            catFallR[i].flip(false, true);
+            catFallL[i] = new TextureRegion(catTexture, 0 + (i * 225), 500, 225, 125);
+            catFallL[i].flip(true, true);
+        }
+        catFallAnimationR = new Animation(0.033f, catFallR);
+        catFallAnimationR.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
+        catFallAnimationL = new Animation(0.033f, catFallL);
+        catFallAnimationL.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
 
         prefs = Gdx.app.getPreferences("FrostyFriends");
 

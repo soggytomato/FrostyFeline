@@ -10,8 +10,8 @@ import com.michaelcyau.helpers.AssetLoader;
 
 public class Bunny {
 
-    public static float width = 17.4f;
-    public static float height = 8f;
+    public static float width = 17f;
+    public static float height = 9.4f;
 
     // NOTE: using a Y-up coordinate system. Y = 0 is at the bottom of the screen.
     private Vector2 position; // x position is MIDDLE of cat. y position is bottom (and height)
@@ -21,9 +21,12 @@ public class Bunny {
     private float gravity = -320;
     private float targetX;
     // how quickly the bunny moves towards the cursor
-    private float horizontalForce = 8;
+    private float horizontalForce = 6f;
 
-    private float rotation;
+    private float angle = 0;
+    private float jumpAngle = -45;
+    private float maxAngle = 90;
+    private float rotation = 75;
 
     private boolean facingRight;
 
@@ -50,32 +53,55 @@ public class Bunny {
         } else {
             velocity.x = horizontalForce * (targetX - position.x);
             velocity.add(acceleration.cpy().scl(delta));
+            if (angle + (rotation * delta) < maxAngle) {
+                angle += (rotation * delta);
+            } else {
+                angle = maxAngle;
+            }
         }
 
         position.add(velocity.cpy().scl(delta));
         if (position.y < gameWorld.getFloor()) {
             position.y = gameWorld.getFloor();
             velocity.y = 0;
+            angle = 0;
         }
 
-        boundingCircle.set(position.x - (width / 2), position.y, 8f);
+        boundingCircle.set(position.x - (width / 2), position.y, 7.5f);
 
         checkForDeathSequence();
     }
 
     public void render(SpriteBatch batcher, float camTop, float runTime) {
-        batcher.draw((facingRight ? AssetLoader.catAnimationR : AssetLoader.catAnimationL).getKeyFrame(runTime),
-                position.x - (width / 2), camTop - position.y - height, width, height);
+        if (position.y > 0 && angle < -15) {
+            batcher.draw((facingRight ? AssetLoader.catFallAnimationR : AssetLoader.catFallAnimationL).getKeyFrame(runTime),
+                    position.x - (width / 2), camTop - position.y - height, width / 2, height / 2, width, height, 1, 1,
+                    facingRight ? angle : -angle);
+        } else if (position.y > 0 && angle >= -15) {
+            batcher.draw((facingRight ? AssetLoader.catJumpAnimationR : AssetLoader.catJumpAnimationL).getKeyFrame(runTime),
+                    position.x - (width / 2), camTop - position.y - height, width / 2, height / 2, width, height, 1, 1,
+                    facingRight ? angle : -angle);
+        } else if (Math.abs(velocity.x) > 1) {
+            batcher.draw((facingRight ? AssetLoader.catAnimationR : AssetLoader.catAnimationL).getKeyFrame(runTime),
+                    position.x - (width / 2), camTop - position.y - height, width / 2, height / 2, width, height, 1, 1,
+                    facingRight ? angle : -angle);
+        } else {
+            batcher.draw((facingRight ? AssetLoader.catStationaryAnimationR : AssetLoader.catStationaryAnimationL).getKeyFrame(runTime),
+                    position.x - (width / 2), camTop - position.y - height, width / 2, height / 2, width, height, 1, 1,
+                    facingRight ? angle : -angle);
+        }
+
     }
 
     public void onclick() {
         if (position.y == gameWorld.getFloor()) {
-            velocity.y = 200;
+            jump();
         }
     }
 
     public void jump() {
         velocity.y = 200;
+        angle = jumpAngle;
     }
 
     public float getX() {
@@ -102,10 +128,6 @@ public class Bunny {
         return acceleration;
     }
 
-    public float getRotation() {
-        return rotation;
-    }
-
     public Circle getBoundingCircle() {
         return boundingCircle;
     }
@@ -113,10 +135,6 @@ public class Bunny {
     public void setTargetX(int x) {
         targetX = x;
         facingRight = targetX > position.x;
-    }
-
-    public boolean isFacingRight() {
-        return facingRight;
     }
 
     private void checkForDeathSequence() {
